@@ -22,7 +22,7 @@ characteristics_df = pd.read_csv('data/characteristics.csv')
 characteristics_df.reset_index()
 characteristics_df.drop(columns=characteristics_df.columns[0], axis=1, inplace=True)
 characteristics_df.columns = ['Name', 'NumOfTrainingSamples', 'NumOfTestingSample', 'NumOfSamples', 'SeqLength', 'NumOfClasses', 'Type']
-characteristics_df = characteristics_df[['Name', 'NumOfSamples', 'SeqLength', 'NumOfClusters', 'Type']]
+characteristics_df = characteristics_df[['Name', 'NumOfSamples', 'SeqLength', 'NumOfClasses', 'Type']]
 
 # tab_desc, tab_acc, tab_time, tab_stats, tab_analysis, tab_misconceptions, tab_ablation, tab_dataset, tab_method = st.tabs(["Description", "Evaluation", "Runtime", "Statistical Tests", "Comparative Analysis", "Misconceptions", "DNN Ablation Analysis", "Datasets", "Methods"]) 
 tab_desc, tab_dataset = st.tabs(["Description", "Datasets"]) 
