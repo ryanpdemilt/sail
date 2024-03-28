@@ -32,6 +32,8 @@ results = results.replace('kl','KL-Div')
 
 symbol_results = pd.read_csv('./data/symbol_results.csv')
 symbol_results['metric'] = 'symbolic-l1'
+results = results.replace('sax','SAX')
+results = results.replace('sfa','SFA')
 
 results = pd.concat([results,symbol_results],ignore_index=True)
 
@@ -77,7 +79,7 @@ def plot_boxplot(df,metrics_list,datasets,method_family):
         cols_list = []
         for i, col in enumerate(df.columns):
             if i > 0:
-                cols_list.append(col[:-len(meatrics_list)-1])
+                cols_list.append(col[:-len(metrics)-1])
             else:
                 cols_list.append(col)
 
