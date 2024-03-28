@@ -35,13 +35,56 @@ symbol_results['metric'] = 'symbolic-l1'
 
 results = pd.concat([results,symbol_results],ignore_index=True)
 
+results['method_metric'] = results['method'] + '+' + results['metric']
+
+results = pd.pivot(results,index='dataset',columns='method_metric',values='acc')
+
 bop_metrics_list = ['symbol','Euclid','BOSS','Cosine','KL-Div']
 
-def plot_boxplot(df,metrics_list,methods,datasets):
-    pass
+def generate_dataframe(df, datasets, methods_family, metrics):
+    df = df.loc[df['dataset'].isin(datasets)][[method_g + '+' + metric for metric in metrics for method_g in methods_family]]
+    df = df[df.mean().sort_values().index]
+    df.insert(0, 'datasets', datasets)
+    return df
+
+def plot_boxplot(df,metrics_list,datasets,method_family):
+    fig = go.Figure()
+    for i, cols in enumerate(df.columns[1:]):
+        fig.add_trace(go.Box(y=df[cols], name=cols[:-len(metrics_list)-1],
+                                marker=dict(
+                                    opacity=1,
+                                    color='rgb(8,81,156)',
+                                    outliercolor='rgba(219, 64, 82, 0.6)',
+                                    line=dict(
+                                        outliercolor='rgba(219, 64, 82, 0.6)',
+                                        outlierwidth=2)),
+                                line_color='rgb(8,81,156)'
+                            ))
+        fig.update_layout(showlegend=False, 
+                            width=1290, 
+                            height=600, 
+                            template="plotly_white", 
+                            font=dict(
+                                    size=39,
+                                    color="black"))
+        
+        fig.update_xaxes(tickfont_size=16)
+        fig.update_yaxes(tickfont_size=16)
+        #fig.update_xaxes(tickfont_size=15, ticks="outside", ticklen=20, tickwidth=2)
+        st.plotly_chart(fig)
+
+        cols_list = []
+        for i, col in enumerate(df.columns):
+            if i > 0:
+                cols_list.append(col[:-len(meatrics_list)-1])
+            else:
+                cols_list.append(col)
+
+        df.columns = cols_list
+        AgGrid(df)
 
 with st.sidebar:
-    st.markdown('# SPARTAN Exploration')
+    st.markdown('# Exploring Spartan')
      
     container_metric = st.container()
     all_metric = st.checkbox('Select all',key='all_metrics')
@@ -50,8 +93,8 @@ with st.sidebar:
     
     container_dataset = st.container()  
     all_cluster = st.checkbox("Select all", key='all_clusters')
-    if all_cluster: cluster_size = container_dataset.multiselect('Select  size', sorted(list(list_num_clusters)), sorted(list(list_num_clusters)))
-    else: cluster_size = container_dataset.multiselect('Select cluster size', sorted(list(list_num_clusters)))
+    if all_cluster: cluster_size = container_dataset.multiselect('Select number of classes', sorted(list(list_num_clusters)), sorted(list(list_num_clusters)))
+    else: cluster_size = container_dataset.multiselect('Select number of classes', sorted(list(list_num_clusters)))
 
     container_dataset = st.container()  
     all_length = st.checkbox("Select all", key='all_lengths')
@@ -74,7 +117,7 @@ with st.sidebar:
     else: methods_family = container_method.multiselect('Select a group of methods',methods, key='selector_methods')
 
 # tab_desc, tab_acc, tab_time, tab_stats, tab_analysis, tab_misconceptions, tab_ablation, tab_dataset, tab_method = st.tabs(["Description", "Evaluation", "Runtime", "Statistical Tests", "Comparative Analysis", "Misconceptions", "DNN Ablation Analysis", "Datasets", "Methods"]) 
-tab_desc, tab_dataset,tab_bop_accuracy = st.tabs(["Description", "Datasets","BOP Accuracy"]) 
+tab_desc, tab_dataset,tab_classification_accuracy = st.tabs(["Description", "Datasets","Classification Accuracy"]) 
 
 
 with tab_desc:
@@ -93,5 +136,7 @@ with tab_dataset:
     st.markdown(text_description_dataset)
     AgGrid(characteristics_df)
 
-with tab_bop_accuracy:
-    st.markdown('# Bag-Of-Patterns Accuracy Results')
+with tab_classification_accuracy:
+    st.markdown('# Classification Accuracy Results')
+    box_df = generate_dataframe(results,datasets,methods_family,metrics)
+    plot_boxplot(box_df,metrics,datasets,methods_family)
