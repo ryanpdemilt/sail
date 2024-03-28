@@ -17,7 +17,7 @@ st. set_page_config(layout="wide")
 st.set_option('deprecation.showPyplotGlobalUse', False)
 
 #plt.style.use('dark_background')
-df = pd.read_csv('data/results.csv')
+# df = pd.read_csv('data/results.csv')
 characteristics_df = pd.read_csv('data/characteristics.csv')
 characteristics_df.reset_index()
 characteristics_df.drop(columns=characteristics_df.columns[0], axis=1, inplace=True)
