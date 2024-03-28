@@ -38,6 +38,7 @@ results = pd.concat([results,symbol_results],ignore_index=True)
 results['method_metric'] = results['method'] + '+' + results['metric']
 
 results = pd.pivot(results,index='dataset',columns='method_metric',values='acc')
+results= results.reset_index()
 
 bop_metrics_list = ['symbol','Euclid','BOSS','Cosine','KL-Div']
 
@@ -84,7 +85,7 @@ def plot_boxplot(df,metrics_list,datasets,method_family):
         AgGrid(df)
 
 with st.sidebar:
-    st.markdown('# Exploring Spartan')
+    st.markdown('# Exploring SPARTAN')
      
     container_metric = st.container()
     all_metric = st.checkbox('Select all',key='all_metrics')
