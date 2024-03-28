@@ -22,32 +22,7 @@ def compute_CD(avranks, n, alpha="0.05", test="nemenyi"):
     cd = q[k] * (k * (k + 1) / (6.0 * n)) ** 0.5
     return cd
 
-
-
-method_class_dict = {'Partitional': ['k-AVG', 'k-DBA', 'k-SC', 'k-Shape', 'PAM-ED', 'PAM-SBD', 'PAM-MSM', 'PAM-LCSS', 'PAM-TWED', 'PAM-SWALE', 'PAM-DTW', 'PAM-EDR', 'PAM-ERP'],
-                     'Kernel': ['KKM_GAK', 'KKM_KDTW', 'KKM_RBF', 'KKM_SINK', 'SC_GAK', 'SC_KDTW', 'SC_RBF', 'SC_SINK'],
-                     'Density': ['DBSCAN-ED', 'DBSCAN-MSM', 'DBSCAN-SBD', 'DP-ED', 'DP-MSM', 'DP-SBD', 'OPTICS-ED', 'OPTICS-MSM', 'OPTICS-SBD'],
-                     'Hierarchical': ['AGG-A-ED', 'AGG-A-MSM', 'AGG-A-SBD', 'AGG-C-ED', 'AGG-C-MSM', 'AGG-C-SBD', 'AGG-S-ED', 'AGG-S-MSM', 'AGG-S-SBD', 'BIRCH'],
-                     'Semi-Supervised': ['SS-DTW', 'FeatTS'],
-                     'Shapelet': ['UShapelets-50'],
-                     'Distribution': ['GMM', 'AP-ED', 'AP-MSM', 'AP-SBD'],
-                     'Model-and-Feature': ['AR-COEFF', 'AR-PVAL', 'CATCH22', 'ES-COEFF', 'LPCC'],
-                     'Deep-Learning': ['DCN', 'DEC', 'IDEC', 'DEPICT', 'DTC', 'DTCR', 'SDCN', 'SOM_VAE', 'ClusterGAN', 'VADE']
-                     }
-
-classes = ['Partitional', 'Kernel', 'Density', 'Hierarchical', 'Semi-Supervised', 'Shapelet', 'Distribution', 'Model-and-Feature', 'Deep-Learning']
-
-methods = ['k-AVG', 'k-DBA', 'k-SC', 'k-Shape', 'KKM_GAK', 'KKM_KDTW', 'KKM_RBF', 'KKM_SINK', 'SC_GAK', 'SC_KDTW', 'SC_RBF', 'SC_SINK', 
-           'DBSCAN-ED', 'DBSCAN-MSM', 'DBSCAN-SBD', 'DP-ED', 'DP-MSM', 'DP-SBD', 'OPTICS-ED', 'OPTICS-MSM', 'OPTICS-SBD', 
-           'PAM-ED', 'PAM-SBD', 'PAM-MSM', 'PAM-LCSS', 'PAM-TWED', 'PAM-SWALE', 'PAM-DTW', 'PAM-EDR', 'PAM-ERP',
-           'AGG-A-ED', 'AGG-A-MSM', 'AGG-A-SBD', 'AGG-C-ED', 'AGG-C-MSM', 'AGG-C-SBD', 'AGG-S-ED', 'AGG-S-MSM', 'AGG-S-SBD', 'BIRCH',
-           'SS-DTW', 'FeatTS', 'UShapelets-50', 'GMM', 'AP-ED', 'AP-MSM', 'AP-SBD',
-           'AR-COEFF', 'AR-PVAL', 'CATCH22', 'ES-COEFF', 'LPCC',
-           'DCN', 'DEC', 'IDEC', 'DEPICT', 'DTC', 'DTCR', 'SDCN', 'SOM_VAE', 'ClusterGAN', 'VADE']
-
-time_methods = ['k-AVG', 'k-DBA', 'k-SC', 'k-Shape', 'KKM_SINK', 'SC_SINK', 'BIRCH','AP_MSM', 'AGG-C_MSM', 
-'DBSCAN_MSM', 'OPTICS_MSM','DensityPeaks_MSM', 'UShapelet_50%', 'FeatTS', 'SS-DTW', 'GMM', 'AR-COEFF', 'DEC', 'IDEC','DTC', 'DTCR', 'SOM-VAE', 
-'DCN', 'DEPICT', 'SDCN', 'ClusterGAN', 'VADE']
+methods = ['SAX','SFA','SPARTAN']
 
 time_methods_dict = {'k-AVG': 4963.54138, 
            'k-Shape': 25509.62824, 
@@ -170,18 +145,6 @@ performance_time_methods_dict_nmi = {'k-AVG': 0.2724,
                                     'RES_CNN+CNRV+NONE': 0.3832}
 
 
-def find_methods(selected_classes):
-    if len(selected_classes) == 0:
-        return methods
-    else:
-        methods_list = []
-        for class_name in selected_classes:
-            for m in method_class_dict[class_name]:
-                methods_list.append(m)
-
-        return methods_list
-
-
 def get_bubble_data(methods, measure_name):
     time = []
     for m in methods:
@@ -260,11 +223,11 @@ list_seq_length = ['VERY-SMALL(<100)', 'SMALL(<300)', 'MEDIUM(<500)', 'LARGE(<10
 
 list_num_clusters = ['VERY-SMALL(<10)', 'SMALL(<20)', 'MEDIUM(<40)', 'LARGE(>40)']
 
-list_measures = ['RI','ARI', 'NMI']
+list_measures = ['symbolic-l1','Euclid','BOSS','Cosine','KL-Div']
 
 list_length = [16,32,64,128,256,512,768,1024]
 
-oracle = ['GENIE','MORTY']
+# oracle = ['GENIE','MORTY']
 
 
 description_intro3 = f"""
