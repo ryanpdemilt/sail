@@ -56,7 +56,7 @@ def generate_dataframe(df, datasets, methods_family, metrics):
 def plot_boxplot(df,metrics_list,datasets,method_family):
     fig = go.Figure()
     for i, cols in enumerate(df.columns[1:]):
-        fig.add_trace(go.Box(y=df[cols], name=cols[:-len(method_family)-1],
+        fig.add_trace(go.Box(y=df[cols], name=cols,
                                 marker=dict(
                                     opacity=1,
                                     color='rgb(8,81,156)',
@@ -82,7 +82,7 @@ def plot_boxplot(df,metrics_list,datasets,method_family):
         cols_list = []
         for i, col in enumerate(df.columns):
             if i > 0:
-                cols_list.append(col[:-len(method_family)-1])
+                cols_list.append(col)
             else:
                 cols_list.append(col)
 
