@@ -66,28 +66,28 @@ def plot_boxplot(df,metrics_list,datasets,method_family):
                                         outlierwidth=2)),
                                 line_color='rgb(8,81,156)'
                             ))
-        fig.update_layout(showlegend=False, 
-                            width=1290, 
-                            height=600, 
-                            template="plotly_white", 
-                            font=dict(
-                                    size=39,
-                                    color="black"))
-        
-        fig.update_xaxes(tickfont_size=16)
-        fig.update_yaxes(tickfont_size=16)
-        #fig.update_xaxes(tickfont_size=15, ticks="outside", ticklen=20, tickwidth=2)
-        st.plotly_chart(fig)
+    fig.update_layout(showlegend=False, 
+                        width=1290, 
+                        height=600, 
+                        template="plotly_white", 
+                        font=dict(
+                                size=39,
+                                color="black"))
+    
+    fig.update_xaxes(tickfont_size=16)
+    fig.update_yaxes(tickfont_size=16)
+    #fig.update_xaxes(tickfont_size=15, ticks="outside", ticklen=20, tickwidth=2)
+    st.plotly_chart(fig)
 
-        cols_list = []
-        for i, col in enumerate(df.columns):
-            if i > 0:
-                cols_list.append(col)
-            else:
-                cols_list.append(col)
+    cols_list = []
+    for i, col in enumerate(df.columns):
+        if i > 0:
+            cols_list.append(col)
+        else:
+            cols_list.append(col)
 
-        df.columns = cols_list
-        AgGrid(df)
+    df.columns = cols_list
+    AgGrid(df)
 
 with st.sidebar:
     st.markdown('# Exploring SPARTAN')
