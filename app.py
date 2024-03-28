@@ -32,8 +32,10 @@ results = results.replace('kl','KL-Div')
 
 symbol_results = pd.read_csv('./data/symbol_results.csv')
 symbol_results['metric'] = 'symbolic-l1'
+symbol_results = symbol_results[symbol_results['method'].isin(['sax','sfa','spartan_pca_allocation'])]
 results = results.replace('sax','SAX')
 results = results.replace('sfa','SFA')
+results = results.replace('spartan_pca_allocation','SPARTAN')
 
 results = pd.concat([results,symbol_results],ignore_index=True)
 
