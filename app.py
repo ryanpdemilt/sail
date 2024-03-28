@@ -41,8 +41,12 @@ def plot_boxplot(df,metrics_list,methods,datasets):
     pass
 
 with st.sidebar:
-    st.markdown('# SPARTAN Exploration') 
-    metric_name = st.selectbox('Pick an assessment measure', list_measures) 
+    st.markdown('# SPARTAN Exploration')
+     
+    container_metric = st.container()
+    all_metric = st.checkbox('Select all',key='all_metrics')
+    if all_metric: metrics = container_metric.multiselect('Select metric',list_measures,list_measures)
+    else: metrics = container_metric.multiselect('Select metric',list_measures)
     
     container_dataset = st.container()  
     all_cluster = st.checkbox("Select all", key='all_clusters')
