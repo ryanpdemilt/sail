@@ -33,18 +33,19 @@ results = results.replace('kl','KL-Div')
 symbol_results = pd.read_csv('./data/symbol_results.csv')
 symbol_results['metric'] = 'symbolic-l1'
 symbol_results = symbol_results[symbol_results['method'].isin(['sax','sfa','spartan_pca_allocation'])]
+
+
+results = pd.concat([results,symbol_results],ignore_index=True)
 results = results.replace('sax','SAX')
 results = results.replace('sfa','SFA')
 results = results.replace('spartan_pca_allocation','SPARTAN')
-
-results = pd.concat([results,symbol_results],ignore_index=True)
 
 results['method_metric'] = results['method'] + '+' + results['metric']
 
 results = pd.pivot(results,index='dataset',columns='method_metric',values='acc')
 results= results.reset_index()
 
-bop_metrics_list = ['symbol','Euclid','BOSS','Cosine','KL-Div']
+bop_metrics_list = ['symbolic-l1','Euclid','BOSS','Cosine','KL-Div']
 
 def generate_dataframe(df, datasets, methods_family, metrics):
     df = df.loc[df['dataset'].isin(datasets)][[method_g + '+' + metric for metric in metrics for method_g in methods_family]]
