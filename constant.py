@@ -266,7 +266,6 @@ same framework for a consistent evaluation in terms of both performance and effi
 
 """
 
-
 text_description_dataset = f"""
 We conduct our evaluation using the UCR Time-Series Archive, the largest collection of class-labeled time series datasets. 
 The archive consists of a collection of 128 datasets sourced from different sensor readings while performing diverse tasks from multiple 

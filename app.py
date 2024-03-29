@@ -79,6 +79,8 @@ def plot_boxplot(df,metrics_list,datasets,method_family):
     #fig.update_xaxes(tickfont_size=15, ticks="outside", ticklen=20, tickwidth=2)
     st.plotly_chart(fig)
 
+
+    st.markdown('# Classification Results Per Dataset')
     cols_list = []
     for i, col in enumerate(df.columns):
         if i > 0:
