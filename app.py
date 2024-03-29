@@ -89,7 +89,7 @@ def plot_boxplot(df,metrics_list,datasets,method_family):
             cols_list.append(col)
 
     df.columns = cols_list
-    AgGrid(df,key='boxplot_table')
+    AgGrid(df)
 
 with st.sidebar:
     st.markdown('# Exploring SPARTAN')
