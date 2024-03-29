@@ -80,7 +80,7 @@ def plot_boxplot(df,metrics_list,datasets,method_family):
     st.plotly_chart(fig)
 
 
-    st.markdown('# Classification Results Per Dataset')
+    st.markdown('# Classification Accuracy Per Dataset')
     cols_list = []
     for i, col in enumerate(df.columns):
         if i > 0:
@@ -94,10 +94,10 @@ def plot_boxplot(df,metrics_list,datasets,method_family):
 with st.sidebar:
     st.markdown('# Exploring SPARTAN')
      
-    container_metric = st.container()
-    all_metric = st.checkbox('Select all',key='all_metrics')
-    if all_metric: metrics = container_metric.multiselect('Select metric',list_measures,list_measures)
-    else: metrics = container_metric.multiselect('Select metric',list_measures)
+    # container_metric = st.container()
+    # all_metric = st.checkbox('Select all',key='all_metrics')
+    # if all_metric: metrics = container_metric.multiselect('Select metric',list_measures,list_measures)
+    # else: metrics = container_metric.multiselect('Select metric',list_measures)
     
     container_dataset = st.container()  
     all_cluster = st.checkbox("Select all", key='all_clusters')
@@ -119,10 +119,10 @@ with st.sidebar:
     if all_dataset: datasets = container_dataset.multiselect('Select datasets', sorted(find_datasets(cluster_size, length_size, types)), sorted(find_datasets(cluster_size, length_size, types)))
     else: datasets = container_dataset.multiselect('Select datasets', sorted(find_datasets(cluster_size, length_size, types)))
 
-    container_method = st.container()
-    all_method = st.checkbox("Select all",key='all_method')
-    if all_method: methods_family = container_method.multiselect('Select a group of methods', methods, methods, key='selector_methods_all')
-    else: methods_family = container_method.multiselect('Select a group of methods',methods, key='selector_methods')
+    # container_method = st.container()
+    # all_method = st.checkbox("Select all",key='all_method')
+    # if all_method: methods_family = container_method.multiselect('Select a group of methods', methods, methods, key='selector_methods_all')
+    # else: methods_family = container_method.multiselect('Select a group of methods',methods, key='selector_methods')
 
 # tab_desc, tab_acc, tab_time, tab_stats, tab_analysis, tab_misconceptions, tab_ablation, tab_dataset, tab_method = st.tabs(["Description", "Evaluation", "Runtime", "Statistical Tests", "Comparative Analysis", "Misconceptions", "DNN Ablation Analysis", "Datasets", "Methods"]) 
 tab_desc, tab_dataset,tab_classification_accuracy = st.tabs(["Description", "Datasets","Classification Accuracy"]) 
@@ -146,5 +146,15 @@ with tab_dataset:
 
 with tab_classification_accuracy:
     st.markdown('# Classification Accuracy Results')
+    container_method = st.container()
+    all_method = st.checkbox("Select all",key='all_method')
+    if all_method: methods_family = container_method.multiselect('Select a group of methods', methods, methods, key='selector_methods_all')
+    else: methods_family = container_method.multiselect('Select a group of methods',methods, key='selector_methods')
+
+    container_metric = st.container()
+    all_metric = st.checkbox('Select all',key='all_metrics')
+    if all_metric: metrics = container_metric.multiselect('Select metric',list_measures,list_measures)
+    else: metrics = container_metric.multiselect('Select metric',list_measures)
+    
     box_df = generate_dataframe(results,datasets,methods_family,metrics)
     plot_boxplot(box_df,metrics,datasets,methods_family)
