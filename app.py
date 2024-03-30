@@ -176,7 +176,7 @@ with tab_tlb:
     if all_metric: tlb_dataset = container_tlb.selectbox('Select dataset',sorted(find_datasets(cluster_size, length_size, types)), sorted(find_datasets(cluster_size, length_size, types)))
     else: tlb_dataset = container_tlb.selectbox('Select dataset',sorted(find_datasets(cluster_size, length_size, types)))
 
-    tlb_file = f'./data/{tlb_dataset}_tlb_results.csv'
+    tlb_file = f'./data/tlb/{tlb_dataset}_tlb_results.csv'
     tlb_results = pd.read_csv(tlb_file)
     tlb_results = tlb_results.replace('sax','SAX')
     tlb_results = tlb_results.replace('sfa','SFA')
