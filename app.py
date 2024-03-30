@@ -58,7 +58,7 @@ onenn_results = onenn_results.rename(columns={'dataset_name':'dataset','classifi
 onenn_results['method_metric'] = onenn_results['method'] + '+' + 'symbolic_l1'
 
 onenn_results = pd.pivot(onenn_results,index='dataset',columns = 'method_metric',values='acc')
-results= results.reset_index()
+onenn_results= onenn_results.reset_index()
 
 onenn_methods_list =['SAX','SFA','SPARTAN','SAX-DR','SAX-VFD','TFSAX','1d-SAX','ESAX']
 
