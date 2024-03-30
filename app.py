@@ -193,7 +193,7 @@ with tab_1nn_classification:
     st.markdown('# 1-Nearest Neighbor Classification Accuracy Results')
     container_1nn_accuracy_method = st.container()
     all_onenn_method = st.checkbox("Select all",key='all_onenn_method')
-    if all_method: onenn_methods_family = container_1nn_accuracy_method.multiselect('Select a group of methods', onenn_methods_list, onenn_methods_list, key='selector_onenn_methods_all')
+    if all_onenn_method: onenn_methods_family = container_1nn_accuracy_method.multiselect('Select a group of methods', onenn_methods_list, onenn_methods_list, key='selector_onenn_methods_all')
     else: onenn_methods_family = container_1nn_accuracy_method.multiselect('Select a group of methods',onenn_methods_list, key='selector_onenn_methods')
 
     container_1nn_accuracy_metric = st.container()
