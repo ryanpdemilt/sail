@@ -13,8 +13,8 @@ from st_aggrid import AgGrid
 import plotly.graph_objects as go
 from statistical_test import graph_ranks
 
+import os
 
-import glob2
 from barchart import plotly_bar_charts_3d
 
 st. set_page_config(layout="wide") 
@@ -56,7 +56,7 @@ alphabet_sizes = np.arange(3,11,1)
 
 tlb_file = './data/tlb/'
 
-tlb_files = glob2.glob("*.csv")
+tlb_files = os.listdir(tlb_file)
 tlb_dfs = {}
 for file in tlb_files:
     dset = file.split('_')[0]
