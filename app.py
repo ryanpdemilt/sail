@@ -319,15 +319,16 @@ with tab_runtime:
     st.markdown('# Runtime Analysis')
 
     acc_results_subset = acc_results[acc_results['dataset'].isin(datasets)]
+    runtime_results_subset = runtime_results[runtime_results['dataset'].isin(datasets)]
     scaling_ranks = acc_results_subset.groupby(by=['dataset'])['acc'].rank(ascending=False)
     acc_results_subset['rank'] = scaling_ranks
     acc_results_subset = acc_results.reset_index()
 
-    runtime_results = pd.merge(acc_results,runtime_results,how='left',on=['method','dataset'])
-    runtime_results['train_time'] = runtime_results['train_time']*1000
-    runtime_results['pred_time'] = runtime_results['pred_time']*1000
-    runtime_results['total_time'] = runtime_results['train_time'] + runtime_results['pred_time']
+    runtime_results_subset = pd.merge(acc_results_subset,runtime_results_subset,how='left',on=['method','dataset'])
+    runtime_results_subset['train_time'] = runtime_results_subset['train_time']*1000
+    runtime_results_subset['pred_time'] = runtime_results_subset['pred_time']*1000
+    runtime_results_subset['total_time'] = runtime_results_subset['train_time'] + runtime_results_subset['pred_time']
 
-    fig = px.scatter(runtime_results,x='total_time',y='acc',color='method',log_x=True)
+    fig = px.scatter(runtime_results_subset,x='total_time',y='rank',color='method',log_x=True)
 
     st.plotly_chart(fig)
