@@ -199,7 +199,7 @@ tab_desc, tab_dataset,tab_1nn_classification,tab_classification_accuracy,tab_tlb
 with tab_desc:
     st.markdown('# SPARTAN')
     st.markdown(description_intro1)
-    background = Image.open('./data/spartan_pipeline.png')
+    background = Image.open('./data/spartan_demo_pipeline.png')
     col1, col2, col3 = st.columns([1.2, 5, 0.2])
     col2.image(background, width=900, caption='Overview of the SPARTAN representation method.')
     # st.markdown(description_intro2)
