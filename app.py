@@ -13,7 +13,7 @@ from st_aggrid import AgGrid
 import plotly.graph_objects as go
 from statistical_test import graph_ranks
 
-from Plotly_barchart3D.barchart import plotly_bar_charts_3d
+from .Plotly_barchart3D.barchart import plotly_bar_charts_3d
 
 st. set_page_config(layout="wide") 
 st.set_option('deprecation.showPyplotGlobalUse', False)
