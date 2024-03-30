@@ -329,6 +329,6 @@ with tab_runtime:
     runtime_results_subset['pred_time'] = runtime_results_subset['pred_time']*1000
     runtime_results_subset['total_time'] = runtime_results_subset['train_time'] + runtime_results_subset['pred_time']
 
-    fig = px.scatter(runtime_results_subset,x='total_time',y='rank',color='method',log_x=True)
+    fig = px.scatter(runtime_results_subset,x='total_time',y='acc',color='method',log_x=True)
 
     st.plotly_chart(fig)
