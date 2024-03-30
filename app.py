@@ -194,7 +194,6 @@ with tab_tlb:
     tlb_results = tlb_results.replace('spartan','SPARTAN')
 
     tlb_results = tlb_results[tlb_results['method'] == tlb_family]
-    print(tlb_results)
 
     tlb_x = tlb_results['a']
     tlb_y = tlb_results['w']
