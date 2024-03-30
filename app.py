@@ -13,7 +13,7 @@ from st_aggrid import AgGrid
 import plotly.graph_objects as go
 from statistical_test import graph_ranks
 
-from .Plotly_barchart3D.barchart import plotly_bar_charts_3d
+from .barchart import plotly_bar_charts_3d
 
 st. set_page_config(layout="wide") 
 st.set_option('deprecation.showPyplotGlobalUse', False)
@@ -186,7 +186,7 @@ with tab_tlb:
     tlb_y = tlb_results['w']
     tlb_z = tlb_results['tlb']
 
-    fig = barchart.plotly_bar_charts_3d(tlb_x,tlb_y,tlb_z,color='x+y', x_title='Alphabet Size', y_title='Word Length',z_title= 'TLB')
+    fig = plotly_bar_charts_3d(tlb_x,tlb_y,tlb_z,color='x+y', x_title='Alphabet Size', y_title='Word Length',z_title= 'TLB')
     st.plotly_chart(fig)
 
 
