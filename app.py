@@ -168,8 +168,8 @@ with tab_tlb:
     st.markdown('# Tightness of Lower Bound Results')
     container_method = st.container()
     all_method = st.checkbox("Select all",key='tlb_method')
-    if all_method: tlb_family = container_method.multiselect('Select a group of methods', methods, methods, key='selector_methods_all')
-    else: tlb_family = container_method.multiselect('Select a group of methods',methods, key='selector_tlb_method')
+    if all_method: tlb_family = container_method.selectbox('Select a group of methods', methods, methods, key='selector_methods_all')
+    else: tlb_family = container_method.selectbox('Select a group of methods',methods, key='selector_tlb_method')
 
     container_tlb = st.container()
     all_metric = st.checkbox('Select all',key='all_tlbs')
