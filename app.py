@@ -55,7 +55,7 @@ onenn_results = pd.read_csv('./data/a4_w12_all_methods.csv')
 
 onenn_results = onenn_results.rename(columns={'dataset_name':'dataset','classifier_name':'method','accuracy':'acc'})
 
-onenn_results['method_metric'] = onenn_results['method'] + '+' + 'symbolic_l1'
+onenn_results['method_metric'] = onenn_results['method'] + '+' + 'symbolic-l1'
 
 onenn_results = pd.pivot(onenn_results,index='dataset',columns = 'method_metric',values='acc')
 onenn_results= onenn_results.reset_index()
