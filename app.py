@@ -96,9 +96,9 @@ acc_results = pd.concat([acc_results,spartan_results])
 
 # full_results = acc_results.join(runtime_results,on=['method','dataset'],)
 
-runtime_results = pd.merge(acc_results,runtime_results,how='left',on=['method','dataset'])
-runtime_results['train_time'] = runtime_results['train_time']*1000
-runtime_results['pred_time'] = runtime_results['pred_time']*1000
+# runtime_results = pd.merge(acc_results,runtime_results,how='left',on=['method','dataset'])
+# runtime_results['train_time'] = runtime_results['train_time']*1000
+# runtime_results['pred_time'] = runtime_results['pred_time']*1000
 
 
 
