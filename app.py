@@ -83,7 +83,7 @@ def generate_dataframe(df, datasets, methods_family, metrics):
     df.insert(0, 'datasets', datasets)
     return df
 
-def plot_boxplot(df,metrics_list,datasets,method_family):
+def plot_boxplot(df,metrics_list,datasets,method_family,key='table_bop'):
     fig = go.Figure()
     for i, cols in enumerate(df.columns[1:]):
         fig.add_trace(go.Box(y=df[cols], name=cols,
@@ -119,7 +119,7 @@ def plot_boxplot(df,metrics_list,datasets,method_family):
             cols_list.append(col)
 
     df.columns = cols_list
-    AgGrid(df)
+    AgGrid(df,key=key)
 
 with st.sidebar:
     st.markdown('# Exploring SPARTAN')
@@ -202,7 +202,7 @@ with tab_1nn_classification:
     else: onenn_metrics = container_1nn_accuracy_metric.multiselect('Select metric',onenn_metrics_list)
 
     onenn_box_df = generate_dataframe(onenn_results,datasets,onenn_methods_family,onenn_metrics)
-    plot_boxplot(onenn_box_df,onenn_metrics,datasets,onenn_methods_family)
+    plot_boxplot(onenn_box_df,onenn_metrics,datasets,onenn_methods_family,key='table_onenn')
 
 with tab_tlb:
     st.markdown('# Tightness of Lower Bound Results')
