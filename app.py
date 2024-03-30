@@ -13,6 +13,8 @@ from st_aggrid import AgGrid
 import plotly.graph_objects as go
 from statistical_test import graph_ranks
 
+
+import glob2
 from barchart import plotly_bar_charts_3d
 
 st. set_page_config(layout="wide") 
@@ -51,6 +53,15 @@ bop_metrics_list = ['symbolic-l1','Euclid','BOSS','Cosine','KL-Div']
 
 word_sizes = np.arange(2,9,1)
 alphabet_sizes = np.arange(3,11,1)
+
+tlb_file = './data/tlb/'
+
+tlb_files = glob2.glob("*.csv")
+tlb_dfs = {}
+for file in tlb_files:
+    dset = file.split('_')[0]
+    tlb_dfs[dset] = pd.read_csv(file)
+
 
 def generate_dataframe(df, datasets, methods_family, metrics):
     df = df.loc[df['dataset'].isin(datasets)][[method_g + '+' + metric for metric in metrics for method_g in methods_family]]
@@ -151,33 +162,32 @@ with tab_dataset:
 
 with tab_classification_accuracy:
     st.markdown('# Classification Accuracy Results')
-    container_method = st.container()
+    container_accuracy_method = st.container()
     all_method = st.checkbox("Select all",key='all_method')
-    if all_method: methods_family = container_method.multiselect('Select a group of methods', methods, methods, key='selector_methods_all')
-    else: methods_family = container_method.multiselect('Select a group of methods',methods, key='selector_methods')
+    if all_method: methods_family = container_accuracy_method.multiselect('Select a group of methods', methods, methods, key='selector_methods_all')
+    else: methods_family = container_accuracy_method.multiselect('Select a group of methods',methods, key='selector_methods')
 
-    container_metric = st.container()
+    container_accuracy_metric = st.container()
     all_metric = st.checkbox('Select all',key='all_metrics')
-    if all_metric: metrics = container_metric.multiselect('Select metric',list_measures,list_measures)
-    else: metrics = container_metric.multiselect('Select metric',list_measures)
+    if all_metric: metrics = container_accuracy_metric.multiselect('Select metric',list_measures,list_measures)
+    else: metrics = container_accuracy_metric.multiselect('Select metric',list_measures)
 
     box_df = generate_dataframe(results,datasets,methods_family,metrics)
     plot_boxplot(box_df,metrics,datasets,methods_family)
 
 with tab_tlb:
     st.markdown('# Tightness of Lower Bound Results')
-    container_method = st.container()
+    container_tlb_method = st.container()
     all_method = st.checkbox("Select all",key='tlb_method')
-    if all_method: tlb_family = container_method.selectbox('Select a group of methods', methods, methods, key='selector_methods_all')
-    else: tlb_family = container_method.selectbox('Select a group of methods',methods, key='selector_tlb_method')
+    if all_method: tlb_family = container_tlb_method.selectbox('Select a group of methods', methods, methods, key='selector_methods_all')
+    else: tlb_family = container_tlb_method.selectbox('Select a group of methods',methods, key='selector_tlb_method')
 
     container_tlb = st.container()
     all_metric = st.checkbox('Select all',key='all_tlbs')
     if all_metric: tlb_dataset = container_tlb.selectbox('Select dataset',sorted(find_datasets(cluster_size, length_size, types)), sorted(find_datasets(cluster_size, length_size, types)))
     else: tlb_dataset = container_tlb.selectbox('Select dataset',sorted(find_datasets(cluster_size, length_size, types)))
 
-    tlb_file = f'./data/tlb/{tlb_dataset}_tlb_results.csv'
-    tlb_results = pd.read_csv(tlb_file)
+    tlb_results = tlb_dfs[tlb_dataset]
     tlb_results = tlb_results.replace('sax','SAX')
     tlb_results = tlb_results.replace('sfa','SFA')
     tlb_results = tlb_results.replace('spartan','SPARTAN')
