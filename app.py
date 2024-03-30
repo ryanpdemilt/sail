@@ -13,6 +13,8 @@ from st_aggrid import AgGrid
 import plotly.graph_objects as go
 from statistical_test import graph_ranks
 
+from Plotly_barchart3D import barchart
+
 st. set_page_config(layout="wide") 
 st.set_option('deprecation.showPyplotGlobalUse', False)
 
@@ -47,6 +49,9 @@ results= results.reset_index()
 
 bop_metrics_list = ['symbolic-l1','Euclid','BOSS','Cosine','KL-Div']
 
+word_sizes = np.arange(2,9,1)
+alphabet_sizes = np.arange(3,11,1)
+
 def generate_dataframe(df, datasets, methods_family, metrics):
     df = df.loc[df['dataset'].isin(datasets)][[method_g + '+' + metric for metric in metrics for method_g in methods_family]]
     df = df[df.mean().sort_values().index]
@@ -80,7 +85,7 @@ def plot_boxplot(df,metrics_list,datasets,method_family):
     st.plotly_chart(fig)
 
 
-    st.markdown('# Classification Accuracy Per Dataset')
+    st.markdown('# Bag-of-Patterns Classification Accuracy Per Dataset')
     cols_list = []
     for i, col in enumerate(df.columns):
         if i > 0:
@@ -125,7 +130,7 @@ with st.sidebar:
     # else: methods_family = container_method.multiselect('Select a group of methods',methods, key='selector_methods')
 
 # tab_desc, tab_acc, tab_time, tab_stats, tab_analysis, tab_misconceptions, tab_ablation, tab_dataset, tab_method = st.tabs(["Description", "Evaluation", "Runtime", "Statistical Tests", "Comparative Analysis", "Misconceptions", "DNN Ablation Analysis", "Datasets", "Methods"]) 
-tab_desc, tab_dataset,tab_classification_accuracy = st.tabs(["Description", "Datasets","Classification Accuracy"]) 
+tab_desc, tab_dataset,tab_classification_accuracy,tab_tlb = st.tabs(["Description", "Datasets","Classification Accuracy","Tightness of Lower Bound"]) 
 
 
 with tab_desc:
@@ -155,6 +160,33 @@ with tab_classification_accuracy:
     all_metric = st.checkbox('Select all',key='all_metrics')
     if all_metric: metrics = container_metric.multiselect('Select metric',list_measures,list_measures)
     else: metrics = container_metric.multiselect('Select metric',list_measures)
-    
+
     box_df = generate_dataframe(results,datasets,methods_family,metrics)
     plot_boxplot(box_df,metrics,datasets,methods_family)
+
+with tab_tlb:
+    st.markdown('# Tightness of Lower Bound Results')
+    container_method = st.container()
+    all_method = st.checkbox("Select all",key='all_method')
+    if all_method: methods_family = container_method.multiselect('Select a group of methods', methods, methods, key='selector_methods_all')
+    else: methods_family = container_method.multiselect('Select a group of methods',methods, key='selector_methods')
+
+    container_tlb = st.container()
+    all_metric = st.checkbox('Select all',key='all_datasets')
+    if all_metric: tlb_dataset = container_tlb.selectbox('Select dataset',sorted(find_datasets(cluster_size, length_size, types)), sorted(find_datasets(cluster_size, length_size, types)))
+    else: tlb_dataset = container_tlb.selectbox('Select dataset',sorted(find_datasets(cluster_size, length_size, types)))
+
+    tlb_file = f'./data/{tlb_dataset}_tlb_results.csv'
+    tlb_results = pd.read_csv(tlb_file)
+    tlb_results = tlb_results.replace('sax','SAX')
+    tlb_results = tlb_results.replace('sfa','SFA')
+    tlb_results = tlb_results.replace('spartan','SPARTAN')
+
+    tlb_x = tlb_results['a']
+    tlb_y = tlb_results['w']
+    tlb_z = tlb_results['tlb']
+
+    fig = barchart.plotly_bar_charts_3d(tlb_x,tlb_y,tlb_z,color='x+y')
+    st.plotly_chart(fig)
+
+
