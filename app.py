@@ -119,7 +119,7 @@ def plot_boxplot(df,metrics_list,datasets,method_family,key='table_bop'):
             cols_list.append(col)
 
     df.columns = cols_list
-    AgGrid(df,fit_columns_on_grid_load=True)
+    AgGrid(df,key=key,reload_data=True,fit_columns_on_grid_load=True)
 
 with st.sidebar:
     st.markdown('# Exploring SPARTAN')
