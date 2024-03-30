@@ -16,7 +16,6 @@ from statistical_test import graph_ranks
 import os
 
 from barchart import plotly_bar_charts_3d
-from tsc.datum.SIGNAL.signalts.classification.models.randomized_kernels.minirocket.minirocket_multivariate_numba import fit
 
 st. set_page_config(layout="wide") 
 st.set_option('deprecation.showPyplotGlobalUse', False)
