@@ -12,6 +12,7 @@ from constant import compute_CD
 from st_aggrid import AgGrid
 import plotly.graph_objects as go
 from statistical_test import graph_ranks
+import plotly.express as px
 
 import os
 
@@ -61,6 +62,43 @@ onenn_results = pd.pivot(onenn_results,index='dataset',columns = 'method_metric'
 onenn_results= onenn_results.reset_index()
 
 onenn_methods_list =['SAX','SFA','SPARTAN','SAX-DR','SAX_VFD','TFSAX','1d-SAX','ESAX']
+
+acc_results = pd.read_csv('./data/symbol_results.csv')
+runtime_results = pd.read_csv('./data/runtime_results_randomized.csv')
+
+acc_results = acc_results[acc_results['method'] != 'spartan_pca']
+
+acc_results = acc_results.replace('sax','SAX')
+acc_results = acc_results.replace('sfa','SFA')
+# acc_results = acc_results.replace('spartan_pca','SPARTAN')
+acc_results = acc_results.replace('spartan_pca_allocation','SPARTAN')
+
+acc_results = acc_results.set_index('method')
+
+scaling_ranks = acc_results.groupby(by=['dataset'])['acc'].rank(ascending=False)
+acc_results['rank'] = scaling_ranks
+acc_results = acc_results.reset_index()
+
+
+# acc_results['SPARTAN+speedup'] = acc_results['SPARTAN']
+
+runtime_results = runtime_results.replace('PAA','SAX')
+runtime_results = runtime_results.replace('DFT','SFA')
+runtime_results = runtime_results.replace('PCA','SPARTAN')
+runtime_results = runtime_results.replace('PCA+Allocation','SPARTAN')
+runtime_results = runtime_results.replace('PCA+Allocation_randomized','SPARTAN+speedup')
+
+spartan_results = acc_results[acc_results['method'] == 'SPARTAN']
+spartan_results['method'] = 'SPARTAN+speedup'
+
+acc_results = pd.concat([acc_results,spartan_results])
+
+
+# full_results = acc_results.join(runtime_results,on=['method','dataset'],)
+
+runtime_results = pd.merge(acc_results,runtime_results,how='left',on=['method','dataset'])
+runtime_results['train_time'] = runtime_results['train_time']*1000
+runtime_results['pred_time'] = runtime_results['pred_time']*1000
 
 
 
@@ -155,7 +193,7 @@ with st.sidebar:
     # else: methods_family = container_method.multiselect('Select a group of methods',methods, key='selector_methods')
 
 # tab_desc, tab_acc, tab_time, tab_stats, tab_analysis, tab_misconceptions, tab_ablation, tab_dataset, tab_method = st.tabs(["Description", "Evaluation", "Runtime", "Statistical Tests", "Comparative Analysis", "Misconceptions", "DNN Ablation Analysis", "Datasets", "Methods"]) 
-tab_desc, tab_dataset,tab_1nn_classification,tab_classification_accuracy,tab_tlb = st.tabs(["Description", "Datasets","1NN-Classification Accuracy","BOP Classification Accuracy","Tightness of Lower Bound"]) 
+tab_desc, tab_dataset,tab_1nn_classification,tab_classification_accuracy,tab_tlb,tab_runtime = st.tabs(["Description", "Datasets","1NN-Classification Accuracy","BOP Classification Accuracy","Tightness of Lower Bound","Runtime Analysis"]) 
 
 
 with tab_desc:
@@ -277,4 +315,19 @@ with tab_tlb:
     # fig = plotly_bar_charts_3d(tlb_x,tlb_y,tlb_z,color='x+y', x_title='Alphabet Size', y_title='Word Length',z_title= 'TLB')
     st.pyplot(fig)
 
+with tab_runtime:
+    st.markdown('# Runtime Analysis')
 
+    acc_results_subset = acc_results[acc_results['dataset'].isin(datasets)]
+    scaling_ranks = acc_results_subset.groupby(by=['dataset'])['acc'].rank(ascending=False)
+    acc_results_subset['rank'] = scaling_ranks
+    acc_results_subset = acc_results.reset_index()
+
+    runtime_results = pd.merge(acc_results,runtime_results,how='left',on=['method','dataset'])
+    runtime_results['train_time'] = runtime_results['train_time']*1000
+    runtime_results['pred_time'] = runtime_results['pred_time']*1000
+    runtime_results['total_time'] = runtime_results['train_time'] + runtime_results['pred_time']
+
+    fig = px.scatter(runtime_results,x='train_time',y='total_time',color='method')
+
+    st.plotly_chart(fig)
