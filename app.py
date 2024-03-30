@@ -178,10 +178,10 @@ with tab_classification_accuracy:
 
 with tab_tlb:
     st.markdown('# Tightness of Lower Bound Results')
-    container_tlb_method = st.container()
-    all_method = st.checkbox("Select all",key='tlb_method')
-    if all_method: tlb_family = container_tlb_method.selectbox('Select a group of methods', methods, methods, key='selector_methods_all')
-    else: tlb_family = container_tlb_method.selectbox('Select a group of methods',methods, key='selector_tlb_method')
+    # container_tlb_method = st.container()
+    # all_method = st.checkbox("Select all",key='tlb_method')
+    # if all_method: tlb_family = container_tlb_method.selectbox('Select a group of methods', methods, methods, key='selector_methods_all')
+    # else: tlb_family = container_tlb_method.selectbox('Select a group of methods',methods, key='selector_tlb_method')
 
     container_tlb = st.container()
     all_metric = st.checkbox('Select all',key='all_tlbs')
@@ -193,17 +193,60 @@ with tab_tlb:
     tlb_results = tlb_results.replace('sfa','SFA')
     tlb_results = tlb_results.replace('spartan','SPARTAN')
 
-    tlb_results = tlb_results[tlb_results['method'] == tlb_family]
+    # tlb_results = tlb_results[tlb_results['method'] == tlb_family]
+    sax_tlb_values = tlb_results[tlb_results['method']=='SAX'][['a','w','tlb']].to_numpy()
+    sfa_tlb_values = tlb_results[tlb_results['method']=='SFA'][['a','w','tlb']].to_numpy()
+    spartan_tlb_values = tlb_results[tlb_results['method']=='SPARTAN'][['a','w','tlb']].to_numpy()
 
-    tlb_x = tlb_results['a']
-    tlb_y = tlb_results['w']
-    tlb_z = tlb_results['tlb']
+    # tlb_x = tlb_results['a']
+    # tlb_y = tlb_results['w']
+    # tlb_z = tlb_results['tlb']
+
+    fig = plt.figure(figsize=(12,4))
+
+    ax1 = fig.add_subplot(131, projection='3d')
+    ax2 = fig.add_subplot(132, projection='3d')
+    ax3 = fig.add_subplot(133,projection='3d')
+
+    width = depth = 1
+
+
+    x,y = np.meshgrid(alphabet_sizes,word_sizes)
+    bottom = np.zeros_like(x)
+
+    # print(x)
+    # print(y)
+
+    ax1.bar3d(x.ravel(),y.ravel(),bottom.ravel(),width,depth,spartan_tlb_values.ravel(),shade=True)
+    ax1.invert_xaxis()
+    # ax1.set_zlim(0.7)
+    ax1.set_zlim(0,0.7)
+    ax1.set_xlabel('w: word_length')
+    ax1.set_ylabel('a: alphabet_size')
+    ax1.set_zlabel('mean tlb')
+    ax1.set_title(f'Spartan Mean TLB {tlb_dataset}')
+
+    ax2.bar3d(x.ravel(),y.ravel(),bottom.ravel(),width,depth,sax_tlb_values.ravel(),shade=True)
+    ax2.invert_xaxis()
+    ax2.set_zlim(0,0.7)
+    ax2.set_xlabel('w: word_length')
+    ax2.set_ylabel('a: alphabet_size')
+    ax2.set_zlabel('mean tlb')
+    ax2.set_title(f'SAX Mean TLB {tlb_dataset}')
+
+    ax3.bar3d(x.ravel(),y.ravel(),bottom.ravel(),width,depth,sfa_tlb_values.ravel(),shade=True)
+    ax3.invert_xaxis()
+    ax3.set_zlim(0,0.7)
+    ax3.set_xlabel('w: word_length')
+    ax3.set_ylabel('a: alphabet_size')
+    ax3.set_zlabel('mean tlb')
+    ax3.set_title(f'SFA* Mean TLB {tlb_dataset}')
 
     # fig = go.Figure()
 
     # fig.add_trace(plotly_bar_charts_3d(tlb_x,tlb_y,tlb_z,color='x+y', x_title='Alphabet Size', y_title='Word Length',z_title= 'TLB'))
 
-    fig = plotly_bar_charts_3d(tlb_x,tlb_y,tlb_z,color='x+y', x_title='Alphabet Size', y_title='Word Length',z_title= 'TLB')
-    st.plotly_chart(fig)
+    # fig = plotly_bar_charts_3d(tlb_x,tlb_y,tlb_z,color='x+y', x_title='Alphabet Size', y_title='Word Length',z_title= 'TLB')
+    st.pyplot(fig)
 
 
