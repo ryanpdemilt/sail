@@ -194,9 +194,9 @@ with tab_tlb:
     tlb_results = tlb_results.replace('spartan','SPARTAN')
 
     # tlb_results = tlb_results[tlb_results['method'] == tlb_family]
-    sax_tlb_values = tlb_results[tlb_results['method']=='SAX'][['a','w','tlb']].to_numpy()
-    sfa_tlb_values = tlb_results[tlb_results['method']=='SFA'][['a','w','tlb']].to_numpy()
-    spartan_tlb_values = tlb_results[tlb_results['method']=='SPARTAN'][['a','w','tlb']].to_numpy()
+    sax_tlb_values = tlb_results[tlb_results['method']=='SAX'][['tlb']].to_numpy()
+    sfa_tlb_values = tlb_results[tlb_results['method']=='SFA'][['tlb']].to_numpy()
+    spartan_tlb_values = tlb_results[tlb_results['method']=='SPARTAN'][['tlb']].to_numpy()
 
     # tlb_x = tlb_results['a']
     # tlb_y = tlb_results['w']
