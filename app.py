@@ -49,7 +49,20 @@ results['method_metric'] = results['method'] + '+' + results['metric']
 results = pd.pivot(results,index='dataset',columns='method_metric',values='acc')
 results= results.reset_index()
 
-bop_metrics_list = ['symbolic-l1','Euclid','BOSS','Cosine','KL-Div']
+bop_metrics_list = ['Euclid','BOSS','Cosine','KL-Div']
+onenn_metrics_list = ['symbolic-l1']
+onenn_results = pd.read_csv('./data/a4_w12_all_methods.csv')
+
+onenn_results = onenn_results.rename(columns={'dataset_name':'dataset','classifier_name':'method','accuracy':'acc'})
+
+onenn_results['method_metric'] = onenn_results['method'] + '+' + 'symbolic_l1'
+
+onenn_results = pd.pivot(onenn_results,index='dataset',columns = 'method_metric',values='acc')
+results= results.reset_index()
+
+onenn_methods_list =['SAX','SFA','SPARTAN','SAX-DR','SAX-VFD','TFSAX','1d-SAX','ESAX']
+
+
 
 word_sizes = np.arange(2,9,1)
 alphabet_sizes = np.arange(3,11,1)
@@ -142,7 +155,7 @@ with st.sidebar:
     # else: methods_family = container_method.multiselect('Select a group of methods',methods, key='selector_methods')
 
 # tab_desc, tab_acc, tab_time, tab_stats, tab_analysis, tab_misconceptions, tab_ablation, tab_dataset, tab_method = st.tabs(["Description", "Evaluation", "Runtime", "Statistical Tests", "Comparative Analysis", "Misconceptions", "DNN Ablation Analysis", "Datasets", "Methods"]) 
-tab_desc, tab_dataset,tab_classification_accuracy,tab_tlb = st.tabs(["Description", "Datasets","Classification Accuracy","Tightness of Lower Bound"]) 
+tab_desc, tab_dataset,tab_1nn_classification,tab_classification_accuracy,tab_tlb = st.tabs(["Description", "Datasets","1NN-Classification Accuracy","BOP Classification Accuracy","Tightness of Lower Bound"]) 
 
 
 with tab_desc:
@@ -162,7 +175,7 @@ with tab_dataset:
     AgGrid(characteristics_df)
 
 with tab_classification_accuracy:
-    st.markdown('# Classification Accuracy Results')
+    st.markdown('# Bag-Of-Patterns Classification Accuracy Results')
     container_accuracy_method = st.container()
     all_method = st.checkbox("Select all",key='all_method')
     if all_method: methods_family = container_accuracy_method.multiselect('Select a group of methods', methods, methods, key='selector_methods_all')
@@ -175,6 +188,21 @@ with tab_classification_accuracy:
 
     box_df = generate_dataframe(results,datasets,methods_family,metrics)
     plot_boxplot(box_df,metrics,datasets,methods_family)
+
+with tab_1nn_classification:
+    st.markdown('# 1-Nearest Neighbor Classification Accuracy Results')
+    container_1nn_accuracy_method = st.container()
+    all_onenn_method = st.checkbox("Select all",key='all_onenn_method')
+    if all_method: onenn_methods_family = container_1nn_accuracy_method.multiselect('Select a group of methods', onenn_methods_list, onenn_methods_list, key='selector_onenn_methods_all')
+    else: onenn_methods_family = container_1nn_accuracy_method.multiselect('Select a group of methods',onenn_methods_list, key='selector_onenn_methods')
+
+    container_1nn_accuracy_metric = st.container()
+    all_onenn_metric = st.checkbox('Select all',key='all_onenn_metrics')
+    if all_onenn_metric: onenn_metrics = container_1nn_accuracy_metric.multiselect('Select metric',onenn_metrics_list,onenn_metrics_list)
+    else: onenn_metrics = container_1nn_accuracy_metric.multiselect('Select metric',onenn_metrics_list)
+
+    onenn_box_df = generate_dataframe(onenn_results,datasets,onenn_methods_family,onenn_metrics)
+    plot_boxplot(onenn_box_df,onenn_metrics,datasets,onenn_methods_family)
 
 with tab_tlb:
     st.markdown('# Tightness of Lower Bound Results')
@@ -224,7 +252,7 @@ with tab_tlb:
     ax1.set_xlabel('w: word_length')
     ax1.set_ylabel('a: alphabet_size')
     ax1.set_zlabel('mean tlb')
-    ax1.set_title(f'Spartan Mean TLB {tlb_dataset}')
+    ax1.set_title(f'SPARTAN Mean TLB {tlb_dataset}')
 
     ax2.bar3d(x.ravel(),y.ravel(),bottom.ravel(),width,depth,sax_tlb_values.ravel(),shade=True)
     ax2.invert_xaxis()
