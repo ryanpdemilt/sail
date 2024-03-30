@@ -182,7 +182,7 @@ with tab_tlb:
     tlb_results = tlb_results.replace('sfa','SFA')
     tlb_results = tlb_results.replace('spartan','SPARTAN')
 
-    tlb_results = tlb_results[tlb_results['method'] == tlb_family]
+    tlb_results = tlb_results[tlb_results['method'].isin(tlb_family)]
 
     tlb_x = tlb_results['a']
     tlb_y = tlb_results['w']
