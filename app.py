@@ -16,6 +16,7 @@ from statistical_test import graph_ranks
 import os
 
 from barchart import plotly_bar_charts_3d
+from tsc.datum.SIGNAL.signalts.classification.models.randomized_kernels.minirocket.minirocket_multivariate_numba import fit
 
 st. set_page_config(layout="wide") 
 st.set_option('deprecation.showPyplotGlobalUse', False)
@@ -119,7 +120,7 @@ def plot_boxplot(df,metrics_list,datasets,method_family,key='table_bop'):
             cols_list.append(col)
 
     df.columns = cols_list
-    AgGrid(df,key=key)
+    AgGrid(df,key=key,fit_columns_on_grid_load=True)
 
 with st.sidebar:
     st.markdown('# Exploring SPARTAN')
