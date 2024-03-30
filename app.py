@@ -167,12 +167,12 @@ with tab_classification_accuracy:
 with tab_tlb:
     st.markdown('# Tightness of Lower Bound Results')
     container_method = st.container()
-    all_method = st.checkbox("Select all",key='all_method')
-    if all_method: methods_family = container_method.multiselect('Select a group of methods', methods, methods, key='selector_methods_all')
-    else: methods_family = container_method.multiselect('Select a group of methods',methods, key='selector_methods')
+    all_method = st.checkbox("Select all",key='tlb_method')
+    if all_method: tlb_family = container_method.multiselect('Select a group of methods', methods, methods, key='selector_methods_all')
+    else: tlb_family = container_method.multiselect('Select a group of methods',methods, key='selector_methods')
 
     container_tlb = st.container()
-    all_metric = st.checkbox('Select all',key='all_datasets')
+    all_metric = st.checkbox('Select all',key='all_tlbs')
     if all_metric: tlb_dataset = container_tlb.selectbox('Select dataset',sorted(find_datasets(cluster_size, length_size, types)), sorted(find_datasets(cluster_size, length_size, types)))
     else: tlb_dataset = container_tlb.selectbox('Select dataset',sorted(find_datasets(cluster_size, length_size, types)))
 
@@ -181,6 +181,8 @@ with tab_tlb:
     tlb_results = tlb_results.replace('sax','SAX')
     tlb_results = tlb_results.replace('sfa','SFA')
     tlb_results = tlb_results.replace('spartan','SPARTAN')
+
+    tlb_results = tlb_results[tlb_family]
 
     tlb_x = tlb_results['a']
     tlb_y = tlb_results['w']
