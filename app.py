@@ -60,7 +60,8 @@ tlb_files = os.listdir(tlb_file)
 tlb_dfs = {}
 for file in tlb_files:
     dset = file.split('_')[0]
-    tlb_dfs[dset] = pd.read_csv(file)
+    csv_file = tlb_file + file
+    tlb_dfs[dset] = pd.read_csv(csv_file)
 
 
 def generate_dataframe(df, datasets, methods_family, metrics):
