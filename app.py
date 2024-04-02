@@ -148,7 +148,7 @@ def plot_boxplot(df,metrics_list,datasets,method_family,key='table_bop'):
     st.plotly_chart(fig)
 
 
-    st.markdown('# Bag-of-Patterns Classification Accuracy Per Dataset')
+    st.markdown('# Classification Accuracy Per Dataset')
     cols_list = []
     for i, col in enumerate(df.columns):
         if i > 0:
