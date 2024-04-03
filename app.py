@@ -324,7 +324,7 @@ with tab_tlb:
 
     tlb_results = pd.DataFrame()
     for dataset in tlb_dataset:
-        tlb_results = pd.concat([tlb_results,tlb_dfs[tlb_dataset]])
+        tlb_results = pd.concat([tlb_results,tlb_dfs[dataset]])
         
     tlb_results = tlb_results.replace('sax','SAX')
     tlb_results = tlb_results.replace('sfa','SFA')
