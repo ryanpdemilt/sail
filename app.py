@@ -317,10 +317,15 @@ with tab_tlb:
 
     container_tlb = st.container()
     all_metric = st.checkbox('Select all',key='all_tlbs')
-    if all_metric: tlb_dataset = container_tlb.selectbox('Select dataset',sorted(find_datasets(cluster_size, length_size, types)), sorted(find_datasets(cluster_size, length_size, types)))
-    else: tlb_dataset = container_tlb.selectbox('Select dataset',sorted(find_datasets(cluster_size, length_size, types)))
+    if all_metric: tlb_dataset = container_tlb.multiselect('Select dataset',sorted(find_datasets(cluster_size, length_size, types)), sorted(find_datasets(cluster_size, length_size, types)))
+    else: tlb_dataset = container_tlb.multiselect('Select dataset',sorted(find_datasets(cluster_size, length_size, types)))
 
-    tlb_results = tlb_dfs[tlb_dataset]
+    # tlb_results = tlb_dfs[tlb_dataset]
+
+    tlb_results = pd.DataFrame()
+    for dataset in tlb_dataset:
+        tlb_results = pd.concat([tlb_results,tlb_dfs[tlb_dataset]])
+        
     tlb_results = tlb_results.replace('sax','SAX')
     tlb_results = tlb_results.replace('sfa','SFA')
     tlb_results = tlb_results.replace('spartan','SPARTAN')
