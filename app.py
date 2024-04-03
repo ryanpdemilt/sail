@@ -204,22 +204,22 @@ with st.sidebar:
     # else: metrics = container_metric.multiselect('Select metric',list_measures)
     
     container_dataset = st.container()  
-    all_cluster = st.checkbox("Select all", key='all_clusters')
+    all_cluster = st.checkbox("Select all", key='all_clusters',value=True)
     if all_cluster: cluster_size = container_dataset.multiselect('Select number of classes', sorted(list(list_num_clusters)), sorted(list(list_num_clusters)))
     else: cluster_size = container_dataset.multiselect('Select number of classes', sorted(list(list_num_clusters)))
 
     container_dataset = st.container()  
-    all_length = st.checkbox("Select all", key='all_lengths')
+    all_length = st.checkbox("Select all", key='all_lengths'value=True)
     if all_length: length_size = container_dataset.multiselect('Select sequence length size', sorted(list(list_seq_length)), sorted(list(list_seq_length)))
     else: length_size = container_dataset.multiselect('Select length sequence size', sorted(list(list_seq_length)))
 
     container_dataset = st.container()  
-    all_type = st.checkbox("Select all", key='all_types')
+    all_type = st.checkbox("Select all", key='all_types',value=True)
     if all_type: types = container_dataset.multiselect('Select sequence type', sorted(list(list_type)), sorted(list(list_type)))
     else: types = container_dataset.multiselect('Select sequence type', sorted(list(list_type)))
    
     container_dataset = st.container()  
-    all_dataset = st.checkbox("Select all", key='all_dataset')
+    all_dataset = st.checkbox("Select all", key='all_dataset',value=True)
     if all_dataset: datasets = container_dataset.multiselect('Select datasets', sorted(find_datasets(cluster_size, length_size, types)), sorted(find_datasets(cluster_size, length_size, types)))
     else: datasets = container_dataset.multiselect('Select datasets', sorted(find_datasets(cluster_size, length_size, types)))
 
@@ -251,12 +251,12 @@ with tab_dataset:
 with tab_classification_accuracy:
     st.markdown('# Bag-Of-Patterns Classification Accuracy Results')
     container_accuracy_method = st.container()
-    all_method = st.checkbox("Select all",key='all_method')
+    all_method = st.checkbox("Select all",key='all_method',value=True)
     if all_method: methods_family = container_accuracy_method.multiselect('Select a group of methods', methods, methods, key='selector_methods_all')
     else: methods_family = container_accuracy_method.multiselect('Select a group of methods',methods, key='selector_methods')
 
     container_accuracy_metric = st.container()
-    all_metric = st.checkbox('Select all',key='all_metrics')
+    all_metric = st.checkbox('Select all',key='all_metrics',value=True)
     if all_metric: metrics = container_accuracy_metric.multiselect('Select metric',list_measures,list_measures)
     else: metrics = container_accuracy_metric.multiselect('Select metric',list_measures)
 
@@ -266,12 +266,12 @@ with tab_classification_accuracy:
 with tab_1nn_classification:
     st.markdown('# 1-Nearest Neighbor Classification Accuracy Results')
     container_1nn_accuracy_method = st.container()
-    all_onenn_method = st.checkbox("Select all",key='all_onenn_method')
+    all_onenn_method = st.checkbox("Select all",key='all_onenn_method',value=True)
     if all_onenn_method: onenn_methods_family = container_1nn_accuracy_method.multiselect('Select a group of methods', onenn_methods_list, onenn_methods_list, key='selector_onenn_methods_all')
     else: onenn_methods_family = container_1nn_accuracy_method.multiselect('Select a group of methods',onenn_methods_list, key='selector_onenn_methods')
 
     container_1nn_accuracy_metric = st.container()
-    all_onenn_metric = st.checkbox('Select all',key='all_onenn_metrics')
+    all_onenn_metric = st.checkbox('Select all',key='all_onenn_metrics',value=True)
     if all_onenn_metric: onenn_metrics = container_1nn_accuracy_metric.multiselect('Select metric',onenn_metrics_list,onenn_metrics_list)
     else: onenn_metrics = container_1nn_accuracy_metric.multiselect('Select metric',onenn_metrics_list)
 
@@ -281,7 +281,7 @@ with tab_critical_diagrams:
     st.markdown('# Critical Difference Diagrams for Symbolic Representation Methods')
 
     container_type = st.container()
-    typ = container_type.selectbox('Select classification type',classification_types)
+    typ = container_type.selectbox('Select classification type',classification_types,index=0)
 
     metric_options = onenn_metrics_list
     cd_df = onenn_results
@@ -297,12 +297,12 @@ with tab_critical_diagrams:
         methods_list = methods
 
     container_cd = st.container()
-    all_cd_metrics = st.checkbox('Select all',key='all_cd_metrics')
+    all_cd_metrics = st.checkbox('Select all',key='all_cd_metrics',value=True)
     if all_cd_metrics: cd_metric = container_cd.multiselect('Select metric',metric_options,metric_options,key='selector_cd_metrics_all')
     else: cd_metric = container_cd.multiselect('Select metric',metric_options,key='selector_cd_metrics')
 
     container_cd_accuracy_method = st.container()
-    all_cd_method = st.checkbox("Select all",key='all_cd_method')
+    all_cd_method = st.checkbox("Select all",key='all_cd_method',value=True)
     if all_cd_method: cd_methods_family = container_cd_accuracy_method.multiselect('Select a group of methods', methods_list, methods_list, key='selector_cd_methods_all')
     else: cd_methods_family = container_cd_accuracy_method.multiselect('Select a group of methods',methods_list, key='selector_cd_methods')
 
