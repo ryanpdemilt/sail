@@ -166,6 +166,13 @@ def plot_stat_plot(df, datasets,stat_methods_family,metrics):
     # df.insert(0, 'dataset', datasets)
 
     # [method_g + '+' + metric for metric in metrics for method_g in stat_methods_family]
+    significance_optons = ['0.1','0.05']
+    stat_test_options = ['nemenyi','bonferroni-dunn']
+
+    container_stat_test = st.container()
+    stat_test = st.selectbox('Select Statistical Test',stat_test_options,index=0,key='stat_test_select')
+    significance = st.selectbox('Select Significance Level',significance_optons,index=0,key='significance_level_select')
+
 
     if len(datasets) > 0:
         if len(stat_methods_family) > 1 and len(stat_methods_family) < 13:
@@ -184,7 +191,7 @@ def plot_stat_plot(df, datasets,stat_methods_family,metrics):
                     names.append(method)
 
                 avranks =  rank_df.values
-                cd = compute_CD(avranks, 128, "0.1")
+                cd = compute_CD(avranks, 128, alpha=significance,test=stat_test)
                 graph_ranks(avranks, names, cd=cd, width=9, textspace=1.25)
                 fig = plt.show()
                 st.pyplot(fig)
