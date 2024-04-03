@@ -303,11 +303,7 @@ with tab_critical_diagrams:
     else: cd_methods_family = container_cd_accuracy_method.multiselect('Select a group of methods',methods_list, key='selector_cd_methods')
 
     cd_df_subset = generate_dataframe(cd_df,datasets,cd_methods_family,cd_metric)
-
-
-
-
-
+    plot_stat_plot(cd_df_subset,datasets,cd_methods_family,cd_metric)
 with tab_tlb:
     st.markdown('# Tightness of Lower Bound Results')
     # container_tlb_method = st.container()
