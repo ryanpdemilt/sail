@@ -209,7 +209,7 @@ with st.sidebar:
     else: cluster_size = container_dataset.multiselect('Select number of classes', sorted(list(list_num_clusters)))
 
     container_dataset = st.container()  
-    all_length = st.checkbox("Select all", key='all_lengths'value=True)
+    all_length = st.checkbox("Select all", key='all_lengths',value=True)
     if all_length: length_size = container_dataset.multiselect('Select sequence length size', sorted(list(list_seq_length)), sorted(list(list_seq_length)))
     else: length_size = container_dataset.multiselect('Select length sequence size', sorted(list(list_seq_length)))
 
