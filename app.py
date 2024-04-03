@@ -93,7 +93,7 @@ spartan_results['method'] = 'SPARTAN+speedup'
 
 acc_results = pd.concat([acc_results,spartan_results])
 
-
+classification_types = ['1NN','BOP']
 # full_results = acc_results.join(runtime_results,on=['method','dataset'],)
 
 # runtime_results = pd.merge(acc_results,runtime_results,how='left',on=['method','dataset'])
@@ -158,6 +158,42 @@ def plot_boxplot(df,metrics_list,datasets,method_family,key='table_bop'):
 
     df.columns = cols_list
     AgGrid(df,key=key,reload_data=True,fit_columns_on_grid_load=True)
+def plot_stat_plot(df, datasets,stat_methods_family,metrics):
+    # container_method = st.container()
+    # stat_methods_family = container_method.multiselect('Select a group of methods', sorted(methods_family), key='selector_stat_methods')
+    
+    df = df.loc[df['dataset'].isin(datasets)][[method_g + '+' + metric for metric in metrics for method_g in stat_methods_family]]
+    df.insert(0, 'dataset', datasets)
+
+    [method_g + '+' + metric for metric in metrics for method_g in stat_methods_family]
+
+    if len(datasets) > 0:
+        if len(stat_methods_family) > 1 and len(stat_methods_family) < 13:
+            def stat_plots(df_toplot):
+                def cd_diagram_process(df, rank_ascending=False):
+                    df = df.rank(ascending=rank_ascending, axis=1)
+                    return df
+
+                df_toplot.drop(columns=df_toplot.columns[0], axis=1, inplace=True)
+
+                rank_ri_df  = cd_diagram_process(df_toplot)
+                rank_df = rank_ri_df.mean().sort_values()
+
+                names = []
+                for method in rank_df.index.values:
+                    names.append(method)
+
+                avranks =  rank_df.values
+                cd = compute_CD(avranks, 128, "0.1")
+                graph_ranks(avranks, names, cd=cd, width=9, textspace=1.25)
+                fig = plt.show()
+                st.pyplot(fig)
+                rank_df = rank_df.reset_index()
+                rank_df.columns = ['Method Name', 'Average Rank']
+                st.table(rank_df)
+
+            stat_plots(df)
+
 
 with st.sidebar:
     st.markdown('# Exploring SPARTAN')
@@ -193,7 +229,7 @@ with st.sidebar:
     # else: methods_family = container_method.multiselect('Select a group of methods',methods, key='selector_methods')
 
 # tab_desc, tab_acc, tab_time, tab_stats, tab_analysis, tab_misconceptions, tab_ablation, tab_dataset, tab_method = st.tabs(["Description", "Evaluation", "Runtime", "Statistical Tests", "Comparative Analysis", "Misconceptions", "DNN Ablation Analysis", "Datasets", "Methods"]) 
-tab_desc, tab_dataset,tab_1nn_classification,tab_classification_accuracy,tab_tlb,tab_runtime = st.tabs(["Description", "Datasets","1NN-Classification Accuracy","BOP Classification Accuracy","Tightness of Lower Bound","Runtime Analysis"]) 
+tab_desc, tab_dataset,tab_1nn_classification,tab_classification_accuracy,tab_critical_diagrams,tab_tlb,tab_runtime = st.tabs(["Description", "Datasets","1NN-Classification Accuracy","BOP Classification Accuracy","Critical Diagrams","Tightness of Lower Bound","Runtime Analysis"]) 
 
 
 with tab_desc:
@@ -241,6 +277,36 @@ with tab_1nn_classification:
 
     onenn_box_df = generate_dataframe(onenn_results,datasets,onenn_methods_family,onenn_metrics)
     plot_boxplot(onenn_box_df,onenn_metrics,datasets,onenn_methods_family,key='table_onenn')
+with tab_critical_diagrams:
+    st.markdown('# Critical Difference Diagrams for Symbolic Representation Methods')
+
+    container_type = st.container()
+    typ = container_type.selectbox('Select classification type',classification_types)
+
+    if typ == '1NN':
+        metric_options = onenn_metrics_list
+        cd_df = onenn_results
+        methods_list = onenn_methods_list
+    elif typ =='BOP':
+        metric_options = bop_metrics_list
+        cd_df = results
+        methods_list = methods
+
+    container_cd = st.container()
+    all_cd_metrics = st.checkbox('Select all',key='all_cd_metrics')
+    if all_cd_metrics: cd_metric = container_cd.multiselect('Select metric',metric_options,metric_options,key='selector_cd_methods_all')
+    else: cd_metric = container_cd.multiselect('Select metric',metric_options,key='selector_cd_methods')
+
+    container_cd_accuracy_method = st.container()
+    all_cd_method = st.checkbox("Select all",key='all_cd_method')
+    if all_cd_method: cd_methods_family = container_cd_accuracy_method.multiselect('Select a group of methods', methods_list, methods_list, key='selector_cd_methods_all')
+    else: cd_methods_family = container_cd_accuracy_method.multiselect('Select a group of methods',methods_list, key='selector_cd_methods')
+
+    cd_df_subset = generate_dataframe(cd_df,datasets,cd_methods_family,cd_metric)
+
+
+
+
 
 with tab_tlb:
     st.markdown('# Tightness of Lower Bound Results')
