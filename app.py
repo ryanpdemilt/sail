@@ -283,6 +283,10 @@ with tab_critical_diagrams:
     container_type = st.container()
     typ = container_type.selectbox('Select classification type',classification_types)
 
+    metric_options = onenn_metrics_list
+    cd_df = onenn_results
+    methods_list = onenn_methods_list
+
     if typ == '1NN':
         metric_options = onenn_metrics_list
         cd_df = onenn_results
