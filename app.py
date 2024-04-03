@@ -162,8 +162,8 @@ def plot_stat_plot(df, datasets,stat_methods_family,metrics):
     # container_method = st.container()
     # stat_methods_family = container_method.multiselect('Select a group of methods', sorted(methods_family), key='selector_stat_methods')
     
-    df = df.loc[df['dataset'].isin(datasets)][[method_g + '+' + metric for metric in metrics for method_g in stat_methods_family]]
-    df.insert(0, 'dataset', datasets)
+    # df = df.loc[df['dataset'].isin(datasets)][[method_g + '+' + metric for metric in metrics for method_g in stat_methods_family]]
+    # df.insert(0, 'dataset', datasets)
 
     [method_g + '+' + metric for metric in metrics for method_g in stat_methods_family]
 
