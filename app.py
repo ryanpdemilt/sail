@@ -165,7 +165,7 @@ def plot_stat_plot(df, datasets,stat_methods_family,metrics):
     # df = df.loc[df['dataset'].isin(datasets)][[method_g + '+' + metric for metric in metrics for method_g in stat_methods_family]]
     # df.insert(0, 'dataset', datasets)
 
-    [method_g + '+' + metric for metric in metrics for method_g in stat_methods_family]
+    # [method_g + '+' + metric for metric in metrics for method_g in stat_methods_family]
 
     if len(datasets) > 0:
         if len(stat_methods_family) > 1 and len(stat_methods_family) < 13:
