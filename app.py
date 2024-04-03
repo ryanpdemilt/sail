@@ -294,8 +294,8 @@ with tab_critical_diagrams:
 
     container_cd = st.container()
     all_cd_metrics = st.checkbox('Select all',key='all_cd_metrics')
-    if all_cd_metrics: cd_metric = container_cd.multiselect('Select metric',metric_options,metric_options,key='selector_cd_methods_all')
-    else: cd_metric = container_cd.multiselect('Select metric',metric_options,key='selector_cd_methods')
+    if all_cd_metrics: cd_metric = container_cd.multiselect('Select metric',metric_options,metric_options,key='selector_cd_metrics_all')
+    else: cd_metric = container_cd.multiselect('Select metric',metric_options,key='selector_cd_metrics')
 
     container_cd_accuracy_method = st.container()
     all_cd_method = st.checkbox("Select all",key='all_cd_method')
