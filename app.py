@@ -170,8 +170,8 @@ def plot_stat_plot(df, datasets,stat_methods_family,metrics,classification_type=
     stat_test_options = ['nemenyi','bonferroni-dunn']
 
     container_stat_test = st.container()
-    stat_test = container_stat_test.selectbox('Select Statistical Test',stat_test_options,index=0)
-    significance = container_stat_test.selectbox('Select Significance Level',significance_optons,index=0)
+    stat_test = container_stat_test.selectbox('Select Statistical Test',stat_test_options,index=0,key='stat_test_select_' + classification_type)
+    significance = container_stat_test.selectbox('Select Significance Level',significance_optons,index=0,key='significance_level_select_' + classification_type)
 
 
     if len(datasets) > 0:
@@ -203,7 +203,7 @@ def plot_stat_plot(df, datasets,stat_methods_family,metrics,classification_type=
 
 
 with st.sidebar:
-    st.markdown('# SAIL')
+    st.markdown('# Exploring SPARTAN')
      
     # container_metric = st.container()
     # all_metric = st.checkbox('Select all',key='all_metrics')
@@ -236,7 +236,7 @@ with st.sidebar:
     # else: methods_family = container_method.multiselect('Select a group of methods',methods, key='selector_methods')
 
 # tab_desc, tab_acc, tab_time, tab_stats, tab_analysis, tab_misconceptions, tab_ablation, tab_dataset, tab_method = st.tabs(["Description", "Evaluation", "Runtime", "Statistical Tests", "Comparative Analysis", "Misconceptions", "DNN Ablation Analysis", "Datasets", "Methods"]) 
-tab_desc, tab_dataset,tab_1nn_classification,tab_classification_accuracy,tab_critical_diagrams,tab_tlb,tab_runtime = st.tabs(["Description", "Datasets","1NN-Classification Accuracy","BOP Classification Accuracy","Critical Diagrams","Tightness of Lower Bound","Runtime Analysis"]) 
+tab_desc, tab_dataset,tab_1nn_classification,tab_classification_accuracy,tab_tlb,tab_runtime = st.tabs(["Description", "Datasets","1NN-Classification Accuracy","BOP Classification Accuracy","Tightness of Lower Bound","Runtime Analysis"]) 
 
 
 with tab_desc:
@@ -329,37 +329,37 @@ with tab_1nn_classification:
 
         cd_df_subset = generate_dataframe(cd_df,datasets,cd_methods_family,cd_metric)
         plot_stat_plot(cd_df_subset,datasets,cd_methods_family,cd_metric,'1nn')
-with tab_critical_diagrams:
-    st.markdown('# Critical Difference Diagrams for Symbolic Representation Methods')
+# with tab_critical_diagrams:
+#     st.markdown('# Critical Difference Diagrams for Symbolic Representation Methods')
 
-    container_type = st.container()
-    typ = container_type.selectbox('Select classification type',classification_types,index=0)
+#     container_type = st.container()
+#     typ = container_type.selectbox('Select classification type',classification_types,index=0)
 
-    metric_options = onenn_metrics_list
-    cd_df = onenn_results
-    methods_list = onenn_methods_list
+#     metric_options = onenn_metrics_list
+#     cd_df = onenn_results
+#     methods_list = onenn_methods_list
 
-    if typ == '1NN':
-        metric_options = onenn_metrics_list
-        cd_df = onenn_results
-        methods_list = onenn_methods_list
-    elif typ =='BOP':
-        metric_options = bop_metrics_list
-        cd_df = results
-        methods_list = methods
+#     if typ == '1NN':
+#         metric_options = onenn_metrics_list
+#         cd_df = onenn_results
+#         methods_list = onenn_methods_list
+#     elif typ =='BOP':
+#         metric_options = bop_metrics_list
+#         cd_df = results
+#         methods_list = methods
 
-    container_cd = st.container()
-    all_cd_metrics = st.checkbox('Select all',key='all_cd_metrics',value=True)
-    if all_cd_metrics: cd_metric = container_cd.multiselect('Select metric',metric_options,metric_options,key='selector_cd_metrics_all')
-    else: cd_metric = container_cd.multiselect('Select metric',metric_options,key='selector_cd_metrics')
+#     container_cd = st.container()
+#     all_cd_metrics = st.checkbox('Select all',key='all_cd_metrics',value=True)
+#     if all_cd_metrics: cd_metric = container_cd.multiselect('Select metric',metric_options,metric_options,key='selector_cd_metrics_all')
+#     else: cd_metric = container_cd.multiselect('Select metric',metric_options,key='selector_cd_metrics')
 
-    container_cd_accuracy_method = st.container()
-    all_cd_method = st.checkbox("Select all",key='all_cd_method',value=True)
-    if all_cd_method: cd_methods_family = container_cd_accuracy_method.multiselect('Select a group of methods', methods_list, methods_list, key='selector_cd_methods_all')
-    else: cd_methods_family = container_cd_accuracy_method.multiselect('Select a group of methods',methods_list, key='selector_cd_methods')
+#     container_cd_accuracy_method = st.container()
+#     all_cd_method = st.checkbox("Select all",key='all_cd_method',value=True)
+#     if all_cd_method: cd_methods_family = container_cd_accuracy_method.multiselect('Select a group of methods', methods_list, methods_list, key='selector_cd_methods_all')
+#     else: cd_methods_family = container_cd_accuracy_method.multiselect('Select a group of methods',methods_list, key='selector_cd_methods')
 
-    cd_df_subset = generate_dataframe(cd_df,datasets,cd_methods_family,cd_metric)
-    plot_stat_plot(cd_df_subset,datasets,cd_methods_family,cd_metric)
+#     cd_df_subset = generate_dataframe(cd_df,datasets,cd_methods_family,cd_metric)
+#     plot_stat_plot(cd_df_subset,datasets,cd_methods_family,cd_metric)
 with tab_tlb:
     st.markdown('# Tightness of Lower Bound Results')
     # container_tlb_method = st.container()
