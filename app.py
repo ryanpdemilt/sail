@@ -158,7 +158,7 @@ def plot_boxplot(df,metrics_list,datasets,method_family,key='table_bop'):
 
     df.columns = cols_list
     AgGrid(df,key=key,reload_data=True,fit_columns_on_grid_load=True)
-def plot_stat_plot(df, datasets,stat_methods_family,metrics):
+def plot_stat_plot(df, datasets,stat_methods_family,metrics,classification_type='1nn'):
     # container_method = st.container()
     # stat_methods_family = container_method.multiselect('Select a group of methods', sorted(methods_family), key='selector_stat_methods')
     
@@ -170,8 +170,8 @@ def plot_stat_plot(df, datasets,stat_methods_family,metrics):
     stat_test_options = ['nemenyi','bonferroni-dunn']
 
     container_stat_test = st.container()
-    stat_test = st.selectbox('Select Statistical Test',stat_test_options,index=0,key='stat_test_select')
-    significance = st.selectbox('Select Significance Level',significance_optons,index=0,key='significance_level_select')
+    stat_test = st.selectbox('Select Statistical Test',stat_test_options,index=0,key='stat_test_select_' + classification_type)
+    significance = st.selectbox('Select Significance Level',significance_optons,index=0,key='significance_level_select_' + classification_type)
 
 
     if len(datasets) > 0:
@@ -256,34 +256,79 @@ with tab_dataset:
     AgGrid(characteristics_df)
 
 with tab_classification_accuracy:
-    st.markdown('# Bag-Of-Patterns Classification Accuracy Results')
-    container_accuracy_method = st.container()
-    all_method = st.checkbox("Select all",key='all_method',value=True)
-    if all_method: methods_family = container_accuracy_method.multiselect('Select a group of methods', methods, methods, key='selector_methods_all')
-    else: methods_family = container_accuracy_method.multiselect('Select a group of methods',methods, key='selector_methods')
 
-    container_accuracy_metric = st.container()
-    all_metric = st.checkbox('Select all',key='all_metrics',value=True)
-    if all_metric: metrics = container_accuracy_metric.multiselect('Select metric',list_measures,list_measures)
-    else: metrics = container_accuracy_metric.multiselect('Select metric',list_measures)
+    tab_bop_boxplot,tab_bop_pairwise,tab_bop_stats = st.tabs(['Boxplot','Pairwise','Statistical Tests'])
 
-    box_df = generate_dataframe(results,datasets,methods_family,metrics)
-    plot_boxplot(box_df,metrics,datasets,methods_family)
+    with tab_bop_boxplot:
+        st.markdown('# Bag-Of-Patterns Classification Accuracy Results')
+        container_accuracy_method = st.container()
+        all_method = st.checkbox("Select all",key='all_method',value=True)
+        if all_method: methods_family = container_accuracy_method.multiselect('Select a group of methods', methods, methods, key='selector_methods_all')
+        else: methods_family = container_accuracy_method.multiselect('Select a group of methods',methods, key='selector_methods')
+
+        container_accuracy_metric = st.container()
+        all_metric = st.checkbox('Select all',key='all_metrics',value=True)
+        if all_metric: metrics = container_accuracy_metric.multiselect('Select metric',list_measures,list_measures)
+        else: metrics = container_accuracy_metric.multiselect('Select metric',list_measures)
+
+        box_df = generate_dataframe(results,datasets,methods_family,metrics)
+        plot_boxplot(box_df,metrics,datasets,methods_family)
+    with tab_bop_pairwise:
+        pass
+    with tab_bop_stats:
+        metric_options = bop_metrics_list
+        cd_df = results
+        methods_list = methods
+
+        container_cd = st.container()
+        all_cd_metrics = st.checkbox('Select all',key='all_cd_metrics_bop',value=True)
+        if all_cd_metrics: cd_metric = container_cd.multiselect('Select metric',metric_options,metric_options,key='selector_cd_metrics_all_bop')
+        else: cd_metric = container_cd.multiselect('Select metric',metric_options,key='selector_cd_metrics_bop')
+
+        container_cd_accuracy_method = st.container()
+        all_cd_method = st.checkbox("Select all",key='all_cd_method_bop',value=True)
+        if all_cd_method: cd_methods_family = container_cd_accuracy_method.multiselect('Select a group of methods', methods_list, methods_list, key='selector_cd_methods_all_bop')
+        else: cd_methods_family = container_cd_accuracy_method.multiselect('Select a group of methods',methods_list, key='selector_cd_methods_bop')
+
+        cd_df_subset = generate_dataframe(cd_df,datasets,cd_methods_family,cd_metric)
+        plot_stat_plot(cd_df_subset,datasets,cd_methods_family,cd_metric,'bop')
 
 with tab_1nn_classification:
-    st.markdown('# 1-Nearest Neighbor Classification Accuracy Results')
-    container_1nn_accuracy_method = st.container()
-    all_onenn_method = st.checkbox("Select all",key='all_onenn_method',value=True)
-    if all_onenn_method: onenn_methods_family = container_1nn_accuracy_method.multiselect('Select a group of methods', onenn_methods_list, onenn_methods_list, key='selector_onenn_methods_all')
-    else: onenn_methods_family = container_1nn_accuracy_method.multiselect('Select a group of methods',onenn_methods_list, key='selector_onenn_methods')
 
-    container_1nn_accuracy_metric = st.container()
-    all_onenn_metric = st.checkbox('Select all',key='all_onenn_metrics',value=True)
-    if all_onenn_metric: onenn_metrics = container_1nn_accuracy_metric.multiselect('Select metric',onenn_metrics_list,onenn_metrics_list)
-    else: onenn_metrics = container_1nn_accuracy_metric.multiselect('Select metric',onenn_metrics_list)
+    tab_1nn_boxplot,tab_1nn_pairwise,tab_1nn_stats = st.tabs(['Boxplot','Pairwise','Statistical Tests'])
+    with tab_1nn_boxplot:
+        st.markdown('# 1-Nearest Neighbor Classification Accuracy Results')
+        container_1nn_accuracy_method = st.container()
+        all_onenn_method = st.checkbox("Select all",key='all_onenn_method',value=True)
+        if all_onenn_method: onenn_methods_family = container_1nn_accuracy_method.multiselect('Select a group of methods', onenn_methods_list, onenn_methods_list, key='selector_onenn_methods_all')
+        else: onenn_methods_family = container_1nn_accuracy_method.multiselect('Select a group of methods',onenn_methods_list, key='selector_onenn_methods')
 
-    onenn_box_df = generate_dataframe(onenn_results,datasets,onenn_methods_family,onenn_metrics)
-    plot_boxplot(onenn_box_df,onenn_metrics,datasets,onenn_methods_family,key='table_onenn')
+        container_1nn_accuracy_metric = st.container()
+        all_onenn_metric = st.checkbox('Select all',key='all_onenn_metrics',value=True)
+        if all_onenn_metric: onenn_metrics = container_1nn_accuracy_metric.multiselect('Select metric',onenn_metrics_list,onenn_metrics_list)
+        else: onenn_metrics = container_1nn_accuracy_metric.multiselect('Select metric',onenn_metrics_list)
+
+        onenn_box_df = generate_dataframe(onenn_results,datasets,onenn_methods_family,onenn_metrics)
+        plot_boxplot(onenn_box_df,onenn_metrics,datasets,onenn_methods_family,key='table_onenn')
+    with tab_1nn_pairwise:
+        pass
+    with tab_1nn_stats:
+        metric_options = onenn_metrics_list
+        cd_df = onenn_results
+        methods_list = onenn_methods_list
+
+        container_cd = st.container()
+        all_cd_metrics = st.checkbox('Select all',key='all_cd_metrics_1nn',value=True)
+        if all_cd_metrics: cd_metric = container_cd.multiselect('Select metric',metric_options,metric_options,key='selector_cd_metrics_all_1nn')
+        else: cd_metric = container_cd.multiselect('Select metric',metric_options,key='selector_cd_metrics_1nn')
+
+        container_cd_accuracy_method = st.container()
+        all_cd_method = st.checkbox("Select all",key='all_cd_method_1nn',value=True)
+        if all_cd_method: cd_methods_family = container_cd_accuracy_method.multiselect('Select a group of methods', methods_list, methods_list, key='selector_cd_methods_all_1nn')
+        else: cd_methods_family = container_cd_accuracy_method.multiselect('Select a group of methods',methods_list, key='selector_cd_methods_1nn')
+
+        cd_df_subset = generate_dataframe(cd_df,datasets,cd_methods_family,cd_metric)
+        plot_stat_plot(cd_df_subset,datasets,cd_methods_family,cd_metric,'1nn')
 with tab_critical_diagrams:
     st.markdown('# Critical Difference Diagrams for Symbolic Representation Methods')
 
@@ -403,6 +448,7 @@ with tab_runtime:
     runtime_results_subset['pred_time'] = runtime_results_subset['pred_time']*1000
     runtime_results_subset['total_time'] = runtime_results_subset['train_time'] + runtime_results_subset['pred_time']
 
+    runtime_results_subset = runtime_results.rename(columns={'total_time':'Total Time','acc':'Mean Accuracy'})
     fig = px.scatter(runtime_results_subset,x='total_time',y='acc',color='method',log_x=True)
 
     st.plotly_chart(fig)
