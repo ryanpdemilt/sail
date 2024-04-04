@@ -274,7 +274,59 @@ with tab_classification_accuracy:
         box_df = generate_dataframe(results,datasets,methods_family,metrics)
         plot_boxplot(box_df,metrics,datasets,methods_family)
     with tab_bop_pairwise:
-        pass
+        option1 = st.selectbox('Method 1',tuple(methods),index=0)
+        metric1 = st.selectbox('Metric 1',bop_metrics_list,index=0)
+        # methods_family = methods_family[1:] + methods_family[:1]
+        option2 = st.selectbox('Method 2',tuple(methods),index=0)
+        metric2 = st.selectbox('Metric 2',bop_metrics_list,index=0)
+
+        method_metric_1 = option1 + '+' + metric1
+        method_metric_2 = option2 + '+' + metric2
+
+        if len(methods_family) > 0 and len(datasets) > 0:
+            fig = go.FigureWidget()
+            trace1 = fig.add_scattergl(x=box_df[option1], y=box_df[option2], mode='markers', name='(Method 1, Method 2)',  text=datasets,
+                                    textposition="bottom center",
+                                    marker = dict(size=10,
+                                                opacity=.7,
+                                                color='red',
+                                                line = dict(width=1, color = '#1f77b4')
+                                                ))
+            fig.add_trace(go.Scatter(
+                                x=[min(min(box_df[method_metric_1])+1e-4, min(box_df[method_metric_2])+1e-4), max(max(box_df[method_metric_1])+1e-4, max(box_df[method_metric_2])+1e-4)],
+                                y=[min(min(box_df[method_metric_1])+1e-4, min(box_df[method_metric_2])+1e-4), max(max(box_df[method_metric_1])+1e-4, max(box_df[method_metric_2])+1e-4)],
+                                name="X=Y"
+                            ))
+            trace2 = fig.add_histogram(x=box_df[method_metric_1], name='x density', marker=dict(color='#1f77b4', opacity=0.7),
+                                yaxis='y2'
+                                )
+            trace3 = fig.add_histogram(y=box_df[method_metric_2], name='y density', marker=dict(color='#1f77b4', opacity=0.7), 
+                                xaxis='x2'
+                                )
+            fig.layout = dict(xaxis=dict(domain=[0, 0.85], showgrid=False, zeroline=False),
+                            yaxis=dict(domain=[0, 0.85], showgrid=False, zeroline=False),
+                            xaxis_title=option1, yaxis_title=option2,
+                            showlegend=False,
+                            margin=dict(t=50),
+                            hovermode='closest',
+                            bargap=0,
+                            xaxis2=dict(domain=[0.85, 1], showgrid=False, zeroline=False),
+                            yaxis2=dict(domain=[0.85, 1], showgrid=False, zeroline=False),
+                            height=600,
+                            )
+
+            def do_zoom(layout, xaxis_range, yaxis_range):
+                inds = ((xaxis_range[0] <= box_df[option1]) & (box_df[option1] <= xaxis_range[1]) &
+                        (yaxis_range[0] <= box_df[option2]) & (box_df[option2] <= yaxis_range[1]))
+
+                with fig.batch_update():
+                    trace2.x = box_df[method_metric_1][inds]
+                    trace3.y = box_df[method_metric_2][inds]
+                
+            fig.layout.on_change(do_zoom, 'xaxis.range', 'yaxis.range')
+            fig.update_xaxes(tickfont_size=16)
+            fig.update_yaxes(tickfont_size=16)
+            st.plotly_chart(fig)
     with tab_bop_stats:
         metric_options = bop_metrics_list
         cd_df = results
