@@ -448,7 +448,7 @@ with tab_runtime:
     runtime_results_subset['pred_time'] = runtime_results_subset['pred_time']*1000
     runtime_results_subset['total_time'] = runtime_results_subset['train_time'] + runtime_results_subset['pred_time']
 
-    runtime_results_subset = runtime_results.rename(columns={'total_time':'Total Time','acc':'Mean Accuracy'})
-    fig = px.scatter(runtime_results_subset,x='Total Time',y='Mean Accuracy',color='method',log_x=True)
+    runtime_results_subset = runtime_results_subset.rename(columns={'total_time':'Runtime','acc':'Mean Accuracy'})
+    fig = px.scatter(runtime_results_subset,x='Runtime',y='Mean Accuracy',color='method',log_x=True)
 
     st.plotly_chart(fig)
