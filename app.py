@@ -285,7 +285,7 @@ with tab_classification_accuracy:
 
         if len(methods_family) > 0 and len(datasets) > 0:
             fig = go.FigureWidget()
-            trace1 = fig.add_scattergl(x=box_df[option1], y=box_df[option2], mode='markers', name='(Method 1, Method 2)',  text=datasets,
+            trace1 = fig.add_scattergl(x=box_df[method_metric_1], y=box_df[method_metric_2], mode='markers', name='(Method 1 + Metric 1, Method 2 + Metric 2)',  text=datasets,
                                     textposition="bottom center",
                                     marker = dict(size=10,
                                                 opacity=.7,
@@ -316,8 +316,8 @@ with tab_classification_accuracy:
                             )
 
             def do_zoom(layout, xaxis_range, yaxis_range):
-                inds = ((xaxis_range[0] <= box_df[option1]) & (box_df[option1] <= xaxis_range[1]) &
-                        (yaxis_range[0] <= box_df[option2]) & (box_df[option2] <= yaxis_range[1]))
+                inds = ((xaxis_range[0] <= box_df[method_metric_1]) & (box_df[method_metric_1] <= xaxis_range[1]) &
+                        (yaxis_range[0] <= box_df[method_metric_2]) & (box_df[method_metric_2] <= yaxis_range[1]))
 
                 with fig.batch_update():
                     trace2.x = box_df[method_metric_1][inds]
