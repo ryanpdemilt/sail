@@ -170,8 +170,8 @@ def plot_stat_plot(df, datasets,stat_methods_family,metrics,classification_type=
     stat_test_options = ['nemenyi','bonferroni-dunn']
 
     container_stat_test = st.container()
-    stat_test = st.selectbox('Select Statistical Test',stat_test_options,index=0,key='stat_test_select_' + classification_type)
-    significance = st.selectbox('Select Significance Level',significance_optons,index=0,key='significance_level_select_' + classification_type)
+    stat_test = container_stat_test.selectbox('Select Statistical Test',stat_test_options,index=0)
+    significance = container_stat_test.selectbox('Select Significance Level',significance_optons,index=0)
 
 
     if len(datasets) > 0:
@@ -203,7 +203,7 @@ def plot_stat_plot(df, datasets,stat_methods_family,metrics,classification_type=
 
 
 with st.sidebar:
-    st.markdown('# Exploring SPARTAN')
+    st.markdown('# SAIL')
      
     # container_metric = st.container()
     # all_metric = st.checkbox('Select all',key='all_metrics')
