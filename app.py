@@ -449,6 +449,6 @@ with tab_runtime:
     runtime_results_subset['total_time'] = runtime_results_subset['train_time'] + runtime_results_subset['pred_time']
 
     runtime_results_subset = runtime_results.rename(columns={'total_time':'Total Time','acc':'Mean Accuracy'})
-    fig = px.scatter(runtime_results_subset,x='total_time',y='acc',color='method',log_x=True)
+    fig = px.scatter(runtime_results_subset,x='Total Time',y='Mean Accuracy',color='method',log_x=True)
 
     st.plotly_chart(fig)
