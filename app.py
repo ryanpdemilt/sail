@@ -285,7 +285,7 @@ with tab_classification_accuracy:
 
         if len(methods_family) > 0 and len(datasets) > 0:
             fig = go.FigureWidget()
-            trace1 = fig.add_scattergl(x=box_df[method_metric_1], y=box_df[method_metric_2], mode='markers', name='(Method 1 + Metric 1, Method 2 + Metric 2)',  text=datasets,
+            trace1 = fig.add_scattergl(x=box_df[method_metric_1], y=box_df[method_metric_2], mode='markers', name='(' + method_metric_1 + '+'+ method_metric_2 +')',  text=datasets,
                                     textposition="bottom center",
                                     marker = dict(size=10,
                                                 opacity=.7,
@@ -363,7 +363,57 @@ with tab_1nn_classification:
         onenn_box_df = generate_dataframe(onenn_results,datasets,onenn_methods_family,onenn_metrics)
         plot_boxplot(onenn_box_df,onenn_metrics,datasets,onenn_methods_family,key='table_onenn')
     with tab_1nn_pairwise:
-        pass
+        option1 = st.selectbox('Method 1',onenn_methods_list,index=0)
+        # methods_family = methods_family[1:] + methods_family[:1]
+        option2 = st.selectbox('Method 2',onenn_methods_list,index=0)
+
+        method_metric_1 = option1 + '+' + 'symbolic-l1'
+        method_metric_2 = option2 + '+' + 'symbolic-l1'
+
+        if len(methods_family) > 0 and len(datasets) > 0:
+            fig = go.FigureWidget()
+            trace1 = fig.add_scattergl(x=onenn_box_df[method_metric_1], y=onenn_box_df[method_metric_2], mode='markers', name='(' + method_metric_1 + '+'+ method_metric_2 +')',  text=datasets,
+                                    textposition="bottom center",
+                                    marker = dict(size=10,
+                                                opacity=.7,
+                                                color='red',
+                                                line = dict(width=1, color = '#1f77b4')
+                                                ))
+            fig.add_trace(go.Scatter(
+                                x=[min(min(onenn_box_df[method_metric_1])+1e-4, min(onenn_box_df[method_metric_2])+1e-4), max(max(onenn_box_df[method_metric_1])+1e-4, max(onenn_box_df[method_metric_2])+1e-4)],
+                                y=[min(min(onenn_box_df[method_metric_1])+1e-4, min(onenn_box_df[method_metric_2])+1e-4), max(max(onenn_box_df[method_metric_1])+1e-4, max(onenn_box_df[method_metric_2])+1e-4)],
+                                name="X=Y"
+                            ))
+            trace2 = fig.add_histogram(x=onenn_box_df[method_metric_1], name='x density', marker=dict(color='#1f77b4', opacity=0.7),
+                                yaxis='y2'
+                                )
+            trace3 = fig.add_histogram(y=onenn_box_df[method_metric_2], name='y density', marker=dict(color='#1f77b4', opacity=0.7), 
+                                xaxis='x2'
+                                )
+            fig.layout = dict(xaxis=dict(domain=[0, 0.85], showgrid=False, zeroline=False),
+                            yaxis=dict(domain=[0, 0.85], showgrid=False, zeroline=False),
+                            xaxis_title=option1, yaxis_title=option2,
+                            showlegend=False,
+                            margin=dict(t=50),
+                            hovermode='closest',
+                            bargap=0,
+                            xaxis2=dict(domain=[0.85, 1], showgrid=False, zeroline=False),
+                            yaxis2=dict(domain=[0.85, 1], showgrid=False, zeroline=False),
+                            height=600,
+                            )
+
+            def do_zoom(layout, xaxis_range, yaxis_range):
+                inds = ((xaxis_range[0] <= box_df[method_metric_1]) & (box_df[method_metric_1] <= xaxis_range[1]) &
+                        (yaxis_range[0] <= box_df[method_metric_2]) & (box_df[method_metric_2] <= yaxis_range[1]))
+
+                with fig.batch_update():
+                    trace2.x = onenn_box_df[method_metric_1][inds]
+                    trace3.y = onenn_box_df[method_metric_2][inds]
+                
+            fig.layout.on_change(do_zoom, 'xaxis.range', 'yaxis.range')
+            fig.update_xaxes(tickfont_size=16)
+            fig.update_yaxes(tickfont_size=16)
+            st.plotly_chart(fig)
     with tab_1nn_stats:
         metric_options = onenn_metrics_list
         cd_df = onenn_results
