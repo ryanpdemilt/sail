@@ -203,7 +203,7 @@ def plot_stat_plot(df, datasets,stat_methods_family,metrics,classification_type=
 
 
 with st.sidebar:
-    st.markdown('# Exploring SPARTAN')
+    st.markdown('# SAIL: Symbolic Representation Explorer')
      
     # container_metric = st.container()
     # all_metric = st.checkbox('Select all',key='all_metrics')
@@ -240,11 +240,11 @@ tab_desc, tab_dataset,tab_1nn_classification,tab_classification_accuracy,tab_tlb
 
 
 with tab_desc:
-    st.markdown('# SPARTAN')
+    st.markdown('# SAIL: A Voyage to Symbolic Representation Solutions for Time-Series Analysis')
     st.markdown(description_intro1)
     background = Image.open('./data/spartan_demo_pipeline.png')
     col1, col2, col3 = st.columns([1.2, 5, 0.2])
-    col2.image(background, width=900, caption='Overview of the SPARTAN representation method.')
+    col2.image(background, width=900, caption='Overview of the SAIL representation method.')
     # st.markdown(description_intro2)
     # background = Image.open('./data/taxonomy.png')
     # col1, col2, col3 = st.columns([1.2, 5, 0.2])
