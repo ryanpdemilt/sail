@@ -210,3 +210,5 @@ def graph_ranks(avranks, names, cd=None, cdmethod=None, lowv=None, highv=None,
 
     if filename:
         print_figure(fig, filename, **kwargs)
+
+    return fig

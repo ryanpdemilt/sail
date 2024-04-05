@@ -19,100 +19,81 @@ import os
 from barchart import plotly_bar_charts_3d
 
 st. set_page_config(layout="wide") 
-st.set_option('deprecation.showPyplotGlobalUse', False)
+@st.cache_data
+def load_data():
+    characteristics_df = pd.read_csv('data/characteristics.csv')
+    characteristics_df.reset_index()
+    characteristics_df.drop(columns=characteristics_df.columns[0], axis=1, inplace=True)
+    characteristics_df.columns = ['Name', 'NumOfTrainingSamples', 'NumOfTestingSample', 'NumOfSamples', 'SeqLength', 'NumOfClasses', 'Type']
+    characteristics_df = characteristics_df[['Name', 'NumOfSamples', 'SeqLength', 'NumOfClasses', 'Type']]
 
-#plt.style.use('dark_background')
-# df = pd.read_csv('data/results.csv')
-characteristics_df = pd.read_csv('data/characteristics.csv')
-characteristics_df.reset_index()
-characteristics_df.drop(columns=characteristics_df.columns[0], axis=1, inplace=True)
-characteristics_df.columns = ['Name', 'NumOfTrainingSamples', 'NumOfTestingSample', 'NumOfSamples', 'SeqLength', 'NumOfClasses', 'Type']
-characteristics_df = characteristics_df[['Name', 'NumOfSamples', 'SeqLength', 'NumOfClasses', 'Type']]
+    results = pd.read_csv('./data/bop_results.csv')
+    results = results.replace('hist_euclidean','Euclid')
+    results = results.replace('boss','BOSS')
+    results = results.replace('cosine_similarity','Cosine')
+    results = results.replace('kl','KL-Div')
 
-results = pd.read_csv('./data/bop_results.csv')
-results = results.replace('hist_euclidean','Euclid')
-results = results.replace('boss','BOSS')
-results = results.replace('cosine_similarity','Cosine')
-results = results.replace('kl','KL-Div')
+    symbol_results = pd.read_csv('./data/symbol_results.csv')
+    symbol_results['metric'] = 'symbolic-l1'
+    symbol_results = symbol_results[symbol_results['method'].isin(['sax','sfa','spartan_pca_allocation'])]
 
-symbol_results = pd.read_csv('./data/symbol_results.csv')
-symbol_results['metric'] = 'symbolic-l1'
-symbol_results = symbol_results[symbol_results['method'].isin(['sax','sfa','spartan_pca_allocation'])]
+    results = pd.concat([results,symbol_results],ignore_index=True)
+    results = results.replace('sax','SAX')
+    results = results.replace('sfa','SFA')
+    results = results.replace('spartan_pca_allocation','SPARTAN')
 
+    results['method_metric'] = results['method'] + '+' + results['metric']
 
-results = pd.concat([results,symbol_results],ignore_index=True)
-results = results.replace('sax','SAX')
-results = results.replace('sfa','SFA')
-results = results.replace('spartan_pca_allocation','SPARTAN')
+    results = pd.pivot(results,index='dataset',columns='method_metric',values='acc')
+    results= results.reset_index()
 
-results['method_metric'] = results['method'] + '+' + results['metric']
+    onenn_results = pd.read_csv('./data/a4_w12_all_methods.csv')
+    onenn_results = onenn_results.rename(columns={'dataset_name':'dataset','classifier_name':'method','accuracy':'acc'})
 
-results = pd.pivot(results,index='dataset',columns='method_metric',values='acc')
-results= results.reset_index()
+    onenn_results['method_metric'] = onenn_results['method'] + '+' + 'symbolic-l1'
 
-bop_metrics_list = ['Euclid','BOSS','Cosine','KL-Div']
-onenn_metrics_list = ['symbolic-l1']
-onenn_results = pd.read_csv('./data/a4_w12_all_methods.csv')
+    onenn_results = pd.pivot(onenn_results,index='dataset',columns = 'method_metric',values='acc')
+    onenn_results= onenn_results.reset_index()
 
-onenn_results = onenn_results.rename(columns={'dataset_name':'dataset','classifier_name':'method','accuracy':'acc'})
+    acc_results = pd.read_csv('./data/symbol_results.csv')
+    runtime_results = pd.read_csv('./data/runtime_results_randomized.csv')
 
-onenn_results['method_metric'] = onenn_results['method'] + '+' + 'symbolic-l1'
+    acc_results = acc_results[acc_results['method'] != 'spartan_pca']
 
-onenn_results = pd.pivot(onenn_results,index='dataset',columns = 'method_metric',values='acc')
-onenn_results= onenn_results.reset_index()
+    acc_results = acc_results.replace('sax','SAX')
+    acc_results = acc_results.replace('sfa','SFA')
+    # acc_results = acc_results.replace('spartan_pca','SPARTAN')
+    acc_results = acc_results.replace('spartan_pca_allocation','SPARTAN')
+    acc_results = acc_results.set_index('method')
 
-onenn_methods_list =['SAX','SFA','SPARTAN','SAX-DR','SAX_VFD','TFSAX','1d-SAX','ESAX']
+    scaling_ranks = acc_results.groupby(by=['dataset'])['acc'].rank(ascending=False)
+    acc_results['rank'] = scaling_ranks
+    acc_results = acc_results.reset_index()
 
-acc_results = pd.read_csv('./data/symbol_results.csv')
-runtime_results = pd.read_csv('./data/runtime_results_randomized.csv')
+    runtime_results = runtime_results.replace('PAA','SAX')
+    runtime_results = runtime_results.replace('DFT','SFA')
+    runtime_results = runtime_results.replace('PCA','SPARTAN')
+    runtime_results = runtime_results.replace('PCA+Allocation','SPARTAN')
+    runtime_results = runtime_results.replace('PCA+Allocation_randomized','SPARTAN+speedup')
 
-acc_results = acc_results[acc_results['method'] != 'spartan_pca']
+    spartan_results = acc_results[acc_results['method'] == 'SPARTAN']
+    spartan_results['method'] = 'SPARTAN+speedup'
 
-acc_results = acc_results.replace('sax','SAX')
-acc_results = acc_results.replace('sfa','SFA')
-# acc_results = acc_results.replace('spartan_pca','SPARTAN')
-acc_results = acc_results.replace('spartan_pca_allocation','SPARTAN')
+    acc_results = pd.concat([acc_results,spartan_results])
 
-acc_results = acc_results.set_index('method')
+    tlb_file = './data/tlb/'
 
-scaling_ranks = acc_results.groupby(by=['dataset'])['acc'].rank(ascending=False)
-acc_results['rank'] = scaling_ranks
-acc_results = acc_results.reset_index()
+    tlb_files = os.listdir(tlb_file)
+    tlb_dfs = {}
+    for file in tlb_files:
+        dset = file.split('_')[0]
+        csv_file = tlb_file + file
+        tlb_dfs[dset] = pd.read_csv(csv_file)
 
-
-# acc_results['SPARTAN+speedup'] = acc_results['SPARTAN']
-
-runtime_results = runtime_results.replace('PAA','SAX')
-runtime_results = runtime_results.replace('DFT','SFA')
-runtime_results = runtime_results.replace('PCA','SPARTAN')
-runtime_results = runtime_results.replace('PCA+Allocation','SPARTAN')
-runtime_results = runtime_results.replace('PCA+Allocation_randomized','SPARTAN+speedup')
-
-spartan_results = acc_results[acc_results['method'] == 'SPARTAN']
-spartan_results['method'] = 'SPARTAN+speedup'
-
-acc_results = pd.concat([acc_results,spartan_results])
-
-classification_types = ['1NN','BOP']
-# full_results = acc_results.join(runtime_results,on=['method','dataset'],)
-
-# runtime_results = pd.merge(acc_results,runtime_results,how='left',on=['method','dataset'])
-# runtime_results['train_time'] = runtime_results['train_time']*1000
-# runtime_results['pred_time'] = runtime_results['pred_time']*1000
+    return characteristics_df, results,onenn_results,tlb_dfs,symbol_results,acc_results,runtime_results,acc_results
 
 
-
-word_sizes = np.arange(2,9,1)
-alphabet_sizes = np.arange(3,11,1)
-
-tlb_file = './data/tlb/'
-
-tlb_files = os.listdir(tlb_file)
-tlb_dfs = {}
-for file in tlb_files:
-    dset = file.split('_')[0]
-    csv_file = tlb_file + file
-    tlb_dfs[dset] = pd.read_csv(csv_file)
+characteristics_df, results,onenn_results,tlb_dfs,symbol_results,acc_results,runtime_results,acc_results = load_data()
 
 
 def generate_dataframe(df, datasets, methods_family, metrics):
@@ -192,8 +173,7 @@ def plot_stat_plot(df, datasets,stat_methods_family,metrics,classification_type=
 
                 avranks =  rank_df.values
                 cd = compute_CD(avranks, 128, alpha=significance,test=stat_test)
-                graph_ranks(avranks, names, cd=cd, width=9, textspace=1.25)
-                fig = plt.show()
+                fig = graph_ranks(avranks, names, cd=cd, width=9, textspace=1.25)
                 st.pyplot(fig)
                 rank_df = rank_df.reset_index()
                 rank_df.columns = ['Method Name', 'Average Rank']

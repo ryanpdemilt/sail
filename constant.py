@@ -1,4 +1,5 @@
 import pandas as pd
+import numpy as np
 
 
 
@@ -23,6 +24,16 @@ def compute_CD(avranks, n, alpha="0.05", test="nemenyi"):
     return cd
 
 methods = ['SAX','SFA','SPARTAN']
+onenn_methods_list =['SAX','SFA','SPARTAN','SAX-DR','SAX_VFD','TFSAX','1d-SAX','ESAX']
+
+classification_types = ['1NN','BOP']
+
+bop_metrics_list = ['Euclid','BOSS','Cosine','KL-Div']
+onenn_metrics_list = ['symbolic-l1']
+
+word_sizes = np.arange(2,9,1)
+alphabet_sizes = np.arange(3,11,1)
+
 
 time_methods_dict = {'k-AVG': 4963.54138, 
            'k-Shape': 25509.62824, 
