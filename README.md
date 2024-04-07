@@ -11,7 +11,7 @@ Overall, SAIL not only facilitates the most comprehensive evaluation study in th
 
 ## Exploring Symbolic Representations
 
-The demo is hosted online using streamlit at this [link](https://sail-symbolic-exploration.streamlit.app/)
+The demo is hosted online using streamlit at this [link](https://sail-explorer.streamlit.app/)
 
 If desired SAIL can also be hosted locally for offline viewing and experimentation, simply perform the following steps to clone the repository and install the required packages to host the app on a local machine.
 
