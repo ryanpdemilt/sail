@@ -163,7 +163,6 @@ def plot_stat_plot(df, datasets,stat_methods_family,metrics,classification_type=
     stat_test = container_stat_test.selectbox('Select Statistical Test',stat_test_options,index=0,key='stat_test_select_' + classification_type)
     significance = container_stat_test.selectbox('Select Significance Level',significance_optons,index=0,key='significance_level_select_' + classification_type)
 
-    print(df.head())
     if len(datasets) > 0:
         if len(stat_methods_family) > 1 and len(stat_methods_family) < 13:
             def stat_plots(df_toplot):
@@ -225,7 +224,7 @@ def plot_tlb_stat_plot(df,datasets,stat_methods_family):
 st.markdown("""
 <style>
     [data-testid=stSidebar] {
-        background-color: #781e1f;
+        background-color: #cf271b;
     }
 </style>
 """, unsafe_allow_html=True)
@@ -270,7 +269,7 @@ tab_desc, tab_dataset,tab_methods,tab_1nn_classification,tab_classification_accu
 with tab_desc:
     st.markdown('# SAIL: A Voyage to Symbolic Representation Solutions for Time-Series Analysis')
     st.markdown(description_intro1)
-    background = Image.open('./data/spartan_demo_pipeline.png')
+    background = Image.open('./data/sail_demo_pipeline.png')
     col1, col2, col3 = st.columns([1.2, 5, 0.2])
     col2.image(background, width=900, caption='Overview of the SAIL representation method.')
     st.markdown(description_intro2)
@@ -539,7 +538,6 @@ with tab_tlb:
             ax.set_zlabel('TLB',labelpad=15)
             ax.set_zlim(0,0.7)
             st.markdown('### TLB per Alphabet Size w/ Fixed Word Length')
-            fig.tight_layout()
             st.pyplot(fig)
         with tlb_col2:
             fig = plt.figure(figsize=(4,4))
@@ -582,7 +580,6 @@ with tab_tlb:
 
 
             st.markdown('### TLB per Word Length w/ Fixed Alphabet Size')
-            fig.tight_layout()
             st.pyplot(fig)
     with tab_tlb_statplots:
         tlbs_subset = tlbs_all[tlbs_all['dataset'].isin(datasets)]
