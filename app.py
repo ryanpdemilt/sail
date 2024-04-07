@@ -80,20 +80,32 @@ def load_data():
     spartan_results['method'] = 'SPARTAN+speedup'
 
     acc_results = pd.concat([acc_results,spartan_results])
+    acc_results['rank'] = acc_results.groupby(by=['dataset'])['acc'].rank(ascending=False)
+    acc_results = acc_results.reset_index()
+
+    runtime_results = pd.merge(acc_results,runtime_results,how='left',on=['method','dataset'])
+    runtime_results['train_time'] = runtime_results['train_time']*1000
+    runtime_results['pred_time'] = runtime_results['pred_time']*1000
+    runtime_results['total_time'] = runtime_results['train_time'] + runtime_results['pred_time']
 
     tlb_file = './data/tlb/'
 
     tlb_files = os.listdir(tlb_file)
     tlb_dfs = {}
+    tlbs_all = pd.DataFrame()
     for file in tlb_files:
         dset = file.split('_')[0]
         csv_file = tlb_file + file
         tlb_dfs[dset] = pd.read_csv(csv_file)
+        tlb_dfs[dset].replace(['sax','sfa','spartan'],['SAX','SFA','SPARTAN'],inplace=True)
+        tlb_dfs[dset]['dataset'] = dset
+    tlbs_all = pd.concat(list(tlb_dfs.values()))
 
-    return characteristics_df, results,onenn_results,tlb_dfs,symbol_results,acc_results,runtime_results,acc_results
+
+    return characteristics_df, results,onenn_results,tlb_dfs,symbol_results,acc_results,runtime_results,acc_results,tlbs_all
 
 
-characteristics_df, results,onenn_results,tlb_dfs,symbol_results,acc_results,runtime_results,acc_results = load_data()
+characteristics_df, results,onenn_results,tlb_dfs,symbol_results,acc_results,runtime_results,acc_results,tlbs_all = load_data()
 
 
 def generate_dataframe(df, datasets, methods_family, metrics):
@@ -147,14 +159,11 @@ def plot_stat_plot(df, datasets,stat_methods_family,metrics,classification_type=
     # df.insert(0, 'dataset', datasets)
 
     # [method_g + '+' + metric for metric in metrics for method_g in stat_methods_family]
-    significance_optons = ['0.1','0.05']
-    stat_test_options = ['nemenyi','bonferroni-dunn']
-
     container_stat_test = st.container()
     stat_test = container_stat_test.selectbox('Select Statistical Test',stat_test_options,index=0,key='stat_test_select_' + classification_type)
     significance = container_stat_test.selectbox('Select Significance Level',significance_optons,index=0,key='significance_level_select_' + classification_type)
 
-
+    print(df.head())
     if len(datasets) > 0:
         if len(stat_methods_family) > 1 and len(stat_methods_family) < 13:
             def stat_plots(df_toplot):
@@ -180,9 +189,48 @@ def plot_stat_plot(df, datasets,stat_methods_family,metrics,classification_type=
                 st.table(rank_df)
 
             stat_plots(df)
+def plot_tlb_stat_plot(df,datasets,stat_methods_family):
 
+    container_stat_test = st.container()
+    stat_test = container_stat_test.selectbox('Select Statistical Test',stat_test_options,index=0,key='stat_test_select_tlb')
+    significance = container_stat_test.selectbox('Select Significance Level',significance_optons,index=0,key='significance_level_select_tlb')
+    
 
+    if len(datasets) > 0:
+        if len(stat_methods_family) > 1 and len(stat_methods_family) < 13:
+            def stat_plots(df_toplot):
+                def cd_diagram_process(df, rank_ascending=False):
+                    df = df.rank(ascending=rank_ascending, axis=1)
+                    return df
+
+                df_toplot.drop(columns=df_toplot.columns[0], axis=1, inplace=True)
+
+                rank_ri_df  = cd_diagram_process(df_toplot)
+                rank_df = rank_ri_df.mean().sort_values()
+
+                names = []
+                for method in rank_df.index.values:
+                    names.append(method)
+
+                avranks =  rank_df.values
+                cd = compute_CD(avranks, 128, alpha=significance,test=stat_test)
+                fig = graph_ranks(avranks, names, cd=cd, width=9, textspace=1)
+                st.pyplot(fig)
+                rank_df = rank_df.reset_index()
+                rank_df.columns = ['Method Name', 'Average Rank']
+                st.table(rank_df)
+
+            stat_plots(df)
+
+st.markdown("""
+<style>
+    [data-testid=stSidebar] {
+        background-color: #781e1f;
+    }
+</style>
+""", unsafe_allow_html=True)
 with st.sidebar:
+
     st.markdown('# SAIL: Symbolic Representation Explorer')
      
     # container_metric = st.container()
@@ -216,7 +264,7 @@ with st.sidebar:
     # else: methods_family = container_method.multiselect('Select a group of methods',methods, key='selector_methods')
 
 # tab_desc, tab_acc, tab_time, tab_stats, tab_analysis, tab_misconceptions, tab_ablation, tab_dataset, tab_method = st.tabs(["Description", "Evaluation", "Runtime", "Statistical Tests", "Comparative Analysis", "Misconceptions", "DNN Ablation Analysis", "Datasets", "Methods"]) 
-tab_desc, tab_dataset,tab_1nn_classification,tab_classification_accuracy,tab_tlb,tab_runtime = st.tabs(["Description", "Datasets","1NN-Classification Accuracy","BOP Classification Accuracy","Tightness of Lower Bound","Runtime Analysis"]) 
+tab_desc, tab_dataset,tab_methods,tab_1nn_classification,tab_classification_accuracy,tab_tlb,tab_runtime,tab_references = st.tabs(["Description", "Datasets",'Methods',"1NN-Classification Accuracy","BOP Classification Accuracy","Tightness of Lower Bound","Runtime Analysis","References"]) 
 
 
 with tab_desc:
@@ -225,6 +273,7 @@ with tab_desc:
     background = Image.open('./data/spartan_demo_pipeline.png')
     col1, col2, col3 = st.columns([1.2, 5, 0.2])
     col2.image(background, width=900, caption='Overview of the SAIL representation method.')
+    st.markdown(description_intro2)
     # st.markdown(description_intro2)
     # background = Image.open('./data/taxonomy.png')
     # col1, col2, col3 = st.columns([1.2, 5, 0.2])
@@ -235,12 +284,25 @@ with tab_dataset:
     st.markdown(text_description_dataset)
     AgGrid(characteristics_df)
 
+with tab_methods:
+    st.markdown('# Method Description')
+    baseline = Image.open('./data/baseline_methods_v3.png')
+    col1, col2, col3 = st.columns([1.2, 5, 0.2])
+    col2.image(baseline, width=900, caption='Summary of basline methods SAX, SFA, and variants.')
+    st.markdown(text_description_models,unsafe_allow_html=True)
+    spartan_pipeline = Image.open('./data/spartan_pipeline.png')
+    col2.image(spartan_pipeline,width=900, caption='Overview of SPARTAN representation method.')
+
 with tab_classification_accuracy:
 
-    tab_bop_boxplot,tab_bop_pairwise,tab_bop_stats = st.tabs(['Boxplot','Pairwise','Statistical Tests'])
+    st.markdown('# Bag-Of-Patterns Classification Accuracy Results')
+    st.markdown(text_bop_classification_description)
 
+    tab_bop_boxplot,tab_bop_pairwise,tab_bop_stats = st.tabs(['Boxplot','Pairwise','Statistical Tests'])
+    
     with tab_bop_boxplot:
-        st.markdown('# Bag-Of-Patterns Classification Accuracy Results')
+        st.markdown(text_boxplot_explanation)
+
         container_accuracy_method = st.container()
         all_method = st.checkbox("Select all",key='all_method',value=True)
         if all_method: methods_family = container_accuracy_method.multiselect('Select a group of methods', methods, methods, key='selector_methods_all')
@@ -254,6 +316,7 @@ with tab_classification_accuracy:
         box_df = generate_dataframe(results,datasets,methods_family,metrics)
         plot_boxplot(box_df,metrics,datasets,methods_family)
     with tab_bop_pairwise:
+        st.markdown(text_pairwise_comparison)
         option1 = st.selectbox('Method 1',tuple(methods),index=0)
         metric1 = st.selectbox('Metric 1',bop_metrics_list,index=0)
         # methods_family = methods_family[1:] + methods_family[:1]
@@ -308,6 +371,7 @@ with tab_classification_accuracy:
             fig.update_yaxes(tickfont_size=16)
             st.plotly_chart(fig)
     with tab_bop_stats:
+        st.markdown(text_cd_diagram_explanation)
         metric_options = bop_metrics_list
         cd_df = results
         methods_list = methods
@@ -326,10 +390,16 @@ with tab_classification_accuracy:
         plot_stat_plot(cd_df_subset,datasets,cd_methods_family,cd_metric,'bop')
 
 with tab_1nn_classification:
+    st.markdown('# 1-Nearest Neighbor Classification Accuracy Results')
+    st.markdown(text_1nn_classification_description)
+    st.latex(test_symbolic_l1_distance)
+    st.markdown(text_1nn_classification_description_2)
 
     tab_1nn_boxplot,tab_1nn_pairwise,tab_1nn_stats = st.tabs(['Boxplot','Pairwise','Statistical Tests'])
     with tab_1nn_boxplot:
-        st.markdown('# 1-Nearest Neighbor Classification Accuracy Results')
+
+        st.markdown(text_boxplot_explanation)
+        
         container_1nn_accuracy_method = st.container()
         all_onenn_method = st.checkbox("Select all",key='all_onenn_method',value=True)
         if all_onenn_method: onenn_methods_family = container_1nn_accuracy_method.multiselect('Select a group of methods', onenn_methods_list, onenn_methods_list, key='selector_onenn_methods_all')
@@ -343,6 +413,7 @@ with tab_1nn_classification:
         onenn_box_df = generate_dataframe(onenn_results,datasets,onenn_methods_family,onenn_metrics)
         plot_boxplot(onenn_box_df,onenn_metrics,datasets,onenn_methods_family,key='table_onenn')
     with tab_1nn_pairwise:
+        st.markdown(text_pairwise_comparison)
         option1 = st.selectbox('Method 1',onenn_methods_list,index=0)
         # methods_family = methods_family[1:] + methods_family[:1]
         option2 = st.selectbox('Method 2',onenn_methods_list,index=0)
@@ -395,6 +466,7 @@ with tab_1nn_classification:
             fig.update_yaxes(tickfont_size=16)
             st.plotly_chart(fig)
     with tab_1nn_stats:
+        st.markdown(text_cd_diagram_explanation)
         metric_options = onenn_metrics_list
         cd_df = onenn_results
         methods_list = onenn_methods_list
@@ -411,126 +483,175 @@ with tab_1nn_classification:
 
         cd_df_subset = generate_dataframe(cd_df,datasets,cd_methods_family,cd_metric)
         plot_stat_plot(cd_df_subset,datasets,cd_methods_family,cd_metric,'1nn')
-# with tab_critical_diagrams:
-#     st.markdown('# Critical Difference Diagrams for Symbolic Representation Methods')
-
-#     container_type = st.container()
-#     typ = container_type.selectbox('Select classification type',classification_types,index=0)
-
-#     metric_options = onenn_metrics_list
-#     cd_df = onenn_results
-#     methods_list = onenn_methods_list
-
-#     if typ == '1NN':
-#         metric_options = onenn_metrics_list
-#         cd_df = onenn_results
-#         methods_list = onenn_methods_list
-#     elif typ =='BOP':
-#         metric_options = bop_metrics_list
-#         cd_df = results
-#         methods_list = methods
-
-#     container_cd = st.container()
-#     all_cd_metrics = st.checkbox('Select all',key='all_cd_metrics',value=True)
-#     if all_cd_metrics: cd_metric = container_cd.multiselect('Select metric',metric_options,metric_options,key='selector_cd_metrics_all')
-#     else: cd_metric = container_cd.multiselect('Select metric',metric_options,key='selector_cd_metrics')
-
-#     container_cd_accuracy_method = st.container()
-#     all_cd_method = st.checkbox("Select all",key='all_cd_method',value=True)
-#     if all_cd_method: cd_methods_family = container_cd_accuracy_method.multiselect('Select a group of methods', methods_list, methods_list, key='selector_cd_methods_all')
-#     else: cd_methods_family = container_cd_accuracy_method.multiselect('Select a group of methods',methods_list, key='selector_cd_methods')
-
-#     cd_df_subset = generate_dataframe(cd_df,datasets,cd_methods_family,cd_metric)
-#     plot_stat_plot(cd_df_subset,datasets,cd_methods_family,cd_metric)
 with tab_tlb:
     st.markdown('# Tightness of Lower Bound Results')
-    # container_tlb_method = st.container()
-    # all_method = st.checkbox("Select all",key='tlb_method')
-    # if all_method: tlb_family = container_tlb_method.selectbox('Select a group of methods', methods, methods, key='selector_methods_all')
-    # else: tlb_family = container_tlb_method.selectbox('Select a group of methods',methods, key='selector_tlb_method')
+    st.markdown(text_tlb_description)
 
-    container_tlb = st.container()
-    # all_metric = st.checkbox('Select all',key='all_tlbs')
-    # if all_metric: tlb_dataset = container_tlb.multiselect('Select dataset',sorted(find_datasets(cluster_size, length_size, types)), sorted(find_datasets(cluster_size, length_size, types)))
-    tlb_dataset = container_tlb.selectbox('Select dataset',sorted(find_datasets(cluster_size, length_size, types)),index=0)
+    tab_tlb_barplots, tab_tlb_statplots = st.tabs(['Comparison Plots','Statistical Tests'])
 
-    tlb_results = tlb_dfs[tlb_dataset]
+    with tab_tlb_barplots:
+        container_tlb = st.container()
+        # all_metric = st.checkbox('Select all',key='all_tlbs')
+        # if all_metric: tlb_dataset = container_tlb.multiselect('Select dataset',sorted(find_datasets(cluster_size, length_size, types)), sorted(find_datasets(cluster_size, length_size, types)))
+        tlb_dataset = container_tlb.selectbox('Select dataset',sorted(find_datasets(cluster_size, length_size, types)),index=28)
+
+        tlb_results = tlb_dfs[tlb_dataset]
+
+        my_cmap = sns.color_palette("YlGnBu", as_cmap=True)
+
+        fig = plt.figure(figsize=(5,5))
+        ax = fig.add_subplot(projection='3d')
+        dx=dy=1
+
+        fixed_w = st.slider('Fix Word Length',2,8,4)
+        fixed_w_results = tlb_results[tlb_results['w'] == fixed_w]
+        fixed_w_results = fixed_w_results.pivot(index='method',columns='a',values='tlb')
         
-    tlb_results = tlb_results.replace('sax','SAX')
-    tlb_results = tlb_results.replace('sfa','SFA')
-    tlb_results = tlb_results.replace('spartan','SPARTAN')
+        xpos = np.arange(fixed_w_results.shape[0])
+        ypos = np.arange(fixed_w_results.shape[1])
 
-    # tlb_results = tlb_results[tlb_results['method'] == tlb_family]
-    sax_tlb_values = tlb_results[tlb_results['method']=='SAX'][['tlb']].to_numpy()
-    sfa_tlb_values = tlb_results[tlb_results['method']=='SFA'][['tlb']].to_numpy()
-    spartan_tlb_values = tlb_results[tlb_results['method']=='SPARTAN'][['tlb']].to_numpy()
+        ax.set_xticks(xpos + dx/2)
+        ax.set_yticks(ypos + dy/2)
 
-    # tlb_x = tlb_results['a']
-    # tlb_y = tlb_results['w']
-    # tlb_z = tlb_results['tlb']
+        # create meshgrid 
+        # print xpos before and after this block if not clear
+        xpos, ypos = np.meshgrid(xpos, ypos)
+        xpos = xpos.flatten()
+        ypos = ypos.flatten()
+        # print(xpos)
+        # print(ypos)
 
-    fig = plt.figure(figsize=(12,4))
+        # the bars starts from 0 attitude
+        zpos=np.zeros(fixed_w_results.shape).flatten()
 
-    ax1 = fig.add_subplot(131, projection='3d')
-    ax2 = fig.add_subplot(132, projection='3d')
-    ax3 = fig.add_subplot(133,projection='3d')
+        dz = fixed_w_results.values.ravel(order='F')
 
-    width = depth = 1
+        colors = [0,50,100]*fixed_w_results.shape[1]
+        colors = plt.cm.YlGnBu(colors)
+
+        ax.bar3d(xpos,ypos,zpos,dx,dy,dz,color=colors,shade=True)
+
+        ax.invert_xaxis()
+        ax.yaxis.set_ticklabels(fixed_w_results.columns)
+        ax.xaxis.set_ticklabels(fixed_w_results.index)
+        ax.set_ylabel('Alphabet Size',labelpad=15)
+        ax.set_zlabel('TLB',labelpad=15)
+        ax.set_zlim(0,0.7)
+
+        st.markdown('## TLB Results for Scaling Alphabet Size w/ Fixed Word Length')
+        st.pyplot(fig)
+
+        fig = plt.figure(figsize=(5,5))
+
+        fixed_a = st.slider('Fix Alphabet Size',3,10,4)
+        fixed_a_results = tlb_results[tlb_results['a'] == fixed_a] 
+        fixed_a_results = fixed_a_results.pivot(index='method',columns='w',values='tlb')
+
+        fig = plt.figure(figsize=(5,5))
+        ax =fig.add_subplot(projection='3d')
+
+        xpos = np.arange(fixed_a_results.shape[0])
+        ypos = np.arange(fixed_a_results.shape[1])
+
+        ax.set_xticks(xpos + dx/2)
+        ax.set_yticks(ypos + dy/2)
+
+        # create meshgrid 
+        # print xpos before and after this block if not clear
+        xpos, ypos = np.meshgrid(xpos, ypos)
+        xpos = xpos.flatten()
+        ypos = ypos.flatten()
+
+        # the bars starts from 0 attitude
+        zpos=np.zeros(fixed_a_results.shape).flatten()
+
+        dz = fixed_a_results.values.ravel(order='F')
+        print(dz)
+
+        colors = [0,50,100]*fixed_a_results.shape[1]
+        colors = plt.cm.YlGnBu(colors)
+
+        ax.bar3d(xpos,ypos,zpos,dx,dy,dz,color=colors,shade=True)
+
+        ax.invert_xaxis()
+        ax.yaxis.set_ticklabels(fixed_a_results.columns)
+        ax.xaxis.set_ticklabels(fixed_a_results.index)
+        ax.set_ylabel('Word Length',labelpad=15)
+        ax.set_zlabel('TLB',labelpad=15)
+        ax.set_zlim(0,0.5)
 
 
-    x,y = np.meshgrid(alphabet_sizes,word_sizes)
-    bottom = np.zeros_like(x)
+        st.markdown('## TLB Results for Scaling Word Length w/ Fixed Alphabet Size')
+        st.pyplot(fig)
+    with tab_tlb_statplots:
+        tlbs_subset = tlbs_all[tlbs_all['dataset'].isin(datasets)]
 
-    # print(x)
-    # print(y)
+        container_tlb_method = st.container()
+        all_tlb_method = st.checkbox("Select all",key='all_tlb_method',value=True)
+        if all_tlb_method: tlb_methods_family = container_tlb_method.multiselect('Select a group of methods', methods, methods, key='selector_tlb_methods_all')
+        else: tlb_methods_family = container_tlb_method.multiselect('Select a group of methods',methods, key='selector_tlb_methods')
 
-    ax1.bar3d(x.ravel(),y.ravel(),bottom.ravel(),width,depth,spartan_tlb_values.ravel(),shade=True)
-    ax1.invert_xaxis()
-    # ax1.set_zlim(0.7)
-    ax1.set_zlim(0,0.7)
-    ax1.set_xlabel('w: word_length')
-    ax1.set_ylabel('a: alphabet_size')
-    ax1.set_zlabel('mean tlb')
-    ax1.set_title(f'SPARTAN Mean TLB {tlb_dataset}')
+        fixed_w = st.slider('Word Length',2,8,4,key='tlb_stat_w_sliders')
+        fixed_a = st.slider('Alphabet Size',3,10,4,key='tlb_stat_a_sliders')
 
-    ax2.bar3d(x.ravel(),y.ravel(),bottom.ravel(),width,depth,sax_tlb_values.ravel(),shade=True)
-    ax2.invert_xaxis()
-    ax2.set_zlim(0,0.7)
-    ax2.set_xlabel('w: word_length')
-    ax2.set_ylabel('a: alphabet_size')
-    ax2.set_zlabel('mean tlb')
-    ax2.set_title(f'SAX Mean TLB {tlb_dataset}')
+        tlbs_subset = tlbs_all[(tlbs_all['dataset'].isin(datasets)) & (tlbs_all['w'] == fixed_w) & (tlbs_all['a'] == fixed_a) & (tlbs_all['method'].isin(tlb_methods_family))]
 
-    ax3.bar3d(x.ravel(),y.ravel(),bottom.ravel(),width,depth,sfa_tlb_values.ravel(),shade=True)
-    ax3.invert_xaxis()
-    ax3.set_zlim(0,0.7)
-    ax3.set_xlabel('w: word_length')
-    ax3.set_ylabel('a: alphabet_size')
-    ax3.set_zlabel('mean tlb')
-    ax3.set_title(f'SFA* Mean TLB {tlb_dataset}')
+        tlbs_subset = pd.pivot(tlbs_subset,index='dataset',columns='method',values='tlb').reset_index()
+
+        plot_tlb_stat_plot(tlbs_subset,datasets,tlb_methods_family)
+
 
     # fig = go.Figure()
 
     # fig.add_trace(plotly_bar_charts_3d(tlb_x,tlb_y,tlb_z,color='x+y', x_title='Alphabet Size', y_title='Word Length',z_title= 'TLB'))
 
     # fig = plotly_bar_charts_3d(tlb_x,tlb_y,tlb_z,color='x+y', x_title='Alphabet Size', y_title='Word Length',z_title= 'TLB')
-    st.pyplot(fig)
+
 
 with tab_runtime:
     st.markdown('# Runtime Analysis')
+    st.markdown(text_runtime_description)
 
-    acc_results_subset = acc_results[acc_results['dataset'].isin(datasets)]
+    runtime_result_option = st.selectbox('Select metric for runtime tradeoff comparison',runtime_options)
+
     runtime_results_subset = runtime_results[runtime_results['dataset'].isin(datasets)]
-    scaling_ranks = acc_results_subset.groupby(by=['dataset'])['acc'].rank(ascending=False)
-    acc_results_subset['rank'] = scaling_ranks
-    acc_results_subset = acc_results.reset_index()
 
-    runtime_results_subset = pd.merge(acc_results_subset,runtime_results_subset,how='left',on=['method','dataset'])
-    runtime_results_subset['train_time'] = runtime_results_subset['train_time']*1000
-    runtime_results_subset['pred_time'] = runtime_results_subset['pred_time']*1000
-    runtime_results_subset['total_time'] = runtime_results_subset['train_time'] + runtime_results_subset['pred_time']
+    runtime_subset_mean = runtime_results_subset.groupby(by='method').agg({'acc':['mean'],'rank':['mean'],'train_time':['sum'],'pred_time':['sum'],'total_time':['sum']})
+    runtime_subset_mean.reset_index(inplace=True)
+    runtime_subset_mean.columns = runtime_subset_mean.columns.droplevel(1)
+    print(runtime_subset_mean.head())
 
-    runtime_results_subset = runtime_results_subset.rename(columns={'total_time':'Runtime','acc':'Mean Accuracy'})
-    fig = px.scatter(runtime_results_subset,x='Runtime',y='Mean Accuracy',color='method',log_x=True)
+    st.markdown('## Total Runtime vs. Accuracy Comparison (Train+Inference)')
+    runtime_subset_mean.rename(columns={'train_time':'Training Runtime (ms/sample)','pred_time':'Inference Runtime (ms/sample)','total_time':'Total Runtime (ms/sample)','acc':'Mean Accuracy','rank':'Mean Rank'},inplace=True)
+    fig = px.scatter(runtime_subset_mean,x='Total Runtime (ms/sample)',y=runtime_result_option,color='method',log_x=True)
+    fig.update_traces(marker_size=10)
+    if runtime_result_option == 'Mean Rank':
+        fig.update_layout(
+            yaxis = dict(autorange="reversed")
+        )
 
     st.plotly_chart(fig)
+
+    st.markdown('## Training Runtime vs. Accuracy Comparison')
+    fig = px.scatter(runtime_subset_mean,x='Training Runtime (ms/sample)',y=runtime_result_option,color='method',log_x=True)
+    fig.update_traces(marker_size=10)
+    if runtime_result_option == 'Mean Rank':
+        fig.update_layout(
+            yaxis = dict(autorange="reversed")
+        )
+
+    st.plotly_chart(fig)
+
+    st.markdown('## Inference Runtime vs. Accuracy Comparison')
+    fig = px.scatter(runtime_subset_mean,x='Inference Runtime (ms/sample)',y=runtime_result_option,color='method',log_x=True)
+    fig.update_traces(marker_size=10)
+    if runtime_result_option == 'Mean Rank':
+        fig.update_layout(
+            yaxis = dict(autorange="reversed")
+        )
+
+    st.plotly_chart(fig)
+
+with tab_references:
+    st.markdown('# References')
+    st.markdown(references)

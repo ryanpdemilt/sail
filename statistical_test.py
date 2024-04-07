@@ -154,7 +154,7 @@ def graph_ranks(avranks, names, cd=None, cdmethod=None, lowv=None, highv=None,
 
     for a in range(lowv, highv + 1):
         text(rankpos(a), cline - tick / 2 - 0.05, str(a),
-             ha="center", va="bottom")
+                ha="center", va="bottom")
 
     k = len(ssums)
 
@@ -167,7 +167,10 @@ def graph_ranks(avranks, names, cd=None, cdmethod=None, lowv=None, highv=None,
               (rankpos(ssums[i]), chei),
               (textspace + b, chei)],
              linewidth=1.7)
-        text(textspace + a, chei, nnames[i], ha="right", va="center")
+        if rankpos(ssums[i]) < 1.1:
+            text(textspace +4.2*a, chei, nnames[i], ha="right", va="center")
+        else:
+            text(textspace + a, chei, nnames[i], ha="right", va="center")
 
     for i in range(math.ceil(k / 2), k):
         chei = cline + minnotsignificant + (k - i - 1) * 0.24

@@ -31,164 +31,18 @@ classification_types = ['1NN','BOP']
 bop_metrics_list = ['Euclid','BOSS','Cosine','KL-Div']
 onenn_metrics_list = ['symbolic-l1']
 
+runtime_options = ['Mean Accuracy', 'Mean Rank']
+
 word_sizes = np.arange(2,9,1)
 alphabet_sizes = np.arange(3,11,1)
 
-
-time_methods_dict = {'k-AVG': 4963.54138, 
-           'k-Shape': 25509.62824, 
-           'k-SC': 237536.667, 
-           'k-DBA': 3410782.915, 
-           'KKM_SINK': 243855.2651, 
-           'SC_SINK': 243064.3738, 
-           'BIRCH': 227.2080344,
-           'AP_MSM': 431.6869359+1000000, 
-           'AGG-C_MSM': 7.314567089+1000000, 
-           'DBSCAN_MSM': 4.462136745+1000000, 
-           'OPTICS_MSM': 994.0497878+1000000,
-           'DensityPeaks_MSM': 596.108005+1000000, 
-           'UShapelet_50%': 304902.1349, 
-           'FeatTS': 87117.32219, 
-           'SS-DTW': 493158.7731, 
-           'GMM': 588.6741066, 
-           'AR-COEFF': 5501.5588374, 
-           'DEC': 6362.423854, 
-           'IDEC': 7437.43861,
-           'DTC': 86722.03318, 
-           'DTCR': 107108.6329, 
-           'SOM-VAE': 78389.82785, 
-           'DCN': 23651.79199, 
-           'DEPICT': 1.39E+04,
-           'SDCN': 4.92E+04,
-           'ClusterGAN': 8.05E+04, 
-           'VADE': 1.42E+04, 
-           'RES_CNN+CNRV+IDEC': 251273.1364, 
-           'RES_CNN+CNRV+NONE': 243835.6978}
-
-performance_time_methods_dict_ri = {'k-AVG': 0.7001, 
-                                    'k-Shape': 0.7268, 
-                                    'k-SC': 0.6282, 
-                                    'k-DBA': 0.6791, 
-                                    'KKM_SINK': 0.7287, 
-                                    'SC_SINK': 0.7321, 
-                                    'BIRCH': 0.7123,
-                                    'AP_MSM': 0.7289, 
-                                    'AGG-C_MSM': 0.7058, 
-                                    'DBSCAN_MSM': 0.4310, 
-                                    'OPTICS_MSM': 0.6037,
-                                    'DensityPeaks_MSM': 0.5640, 
-                                    'UShapelet_50%': 0.5718, 
-                                    'FeatTS': 0.7203, 
-                                    'SS-DTW': 0.6307, 
-                                    'GMM': 0.7165, 
-                                    'AR-COEFF': 0.6885, 
-                                    'DEC': 0.7090, 
-                                    'IDEC': 0.7159,
-                                    'DTC': 0.7085, 
-                                    'DTCR': 0.6832, 
-                                    'SOM-VAE': 0.6457, 
-                                    'DCN': 0.5716, 
-                                    'DEPICT': 0.7111, 
-                                    'SDCN': 0.7104,
-                                    'ClusterGAN': 0.7082, 
-                                    'VADE': 0.7027, 
-                                    'RES_CNN+CNRV+IDEC': 0.7337, 
-                                    'RES_CNN+CNRV+NONE': 0.7393}
-
-performance_time_methods_dict_ari = {'k-AVG': 0.1811, 
-                                    'k-Shape': 0.2528, 
-                                    'k-SC': 0.1788, 
-                                    'k-DBA': 0.2021, 
-                                    'KKM_SINK': 0.2553, 
-                                    'SC_SINK': 0.2661, 
-                                    'BIRCH': 0.2305,
-                                    'AP_MSM': 0.2204, 
-                                    'AGG-C_MSM': 0.2415, 
-                                    'DBSCAN_MSM': 0.1019, 
-                                    'OPTICS_MSM': 0.0705,
-                                    'DensityPeaks_MSM': 0.0751, 
-                                    'UShapelet_50%': 0.1510, 
-                                    'FeatTS': 0.2823, 
-                                    'SS-DTW': 0.1383, 
-                                    'GMM': 0.2193, 
-                                    'AR-COEFF': 0.1159, 
-                                    'DEC': 0.1935, 
-                                    'IDEC': 0.2150,
-                                    'DTC': 0.2132, 
-                                    'DTCR': 0.1392, 
-                                    'SOM-VAE': 0.0976, 
-                                    'DCN': 0.0444, 
-                                    'DEPICT': 0.1900, 
-                                    'SDCN': 0.2000,
-                                    'ClusterGAN': 0.2100, 
-                                    'VADE': 0.1734, 
-                                    'RES_CNN+CNRV+IDEC': 0.2565, 
-                                    'RES_CNN+CNRV+NONE': 0.2702}
-
-performance_time_methods_dict_nmi = {'k-AVG': 0.2724, 
-                                    'k-Shape': 0.3362, 
-                                    'k-SC': 0.2492, 
-                                    'k-DBA': 0.2776, 
-                                    'KKM_SINK': 0.3461, 
-                                    'SC_SINK': 0.3513, 
-                                    'BIRCH': 0.3483,
-                                    'AP_MSM': 0.4269, 
-                                    'AGG-C_MSM': 0.3712, 
-                                    'DBSCAN_MSM': 0.3293, 
-                                    'OPTICS_MSM': 0.3505,
-                                    'DensityPeaks_MSM': 0.3293, 
-                                    'UShapelet_50%': 0.2385, 
-                                    'FeatTS': 0.3229, 
-                                    'SS-DTW': 0.2427, 
-                                    'GMM': 0.3067, 
-                                    'AR-COEFF': 0.1881, 
-                                    'DEC': 0.2790, 
-                                    'IDEC': 0.2967,
-                                    'DTC': 0.2985, 
-                                    'DTCR': 0.2184, 
-                                    'SOM-VAE': 0.1804, 
-                                    'DCN': 0.1097, 
-                                    'DEPICT': 0.2743, 
-                                    'SDCN': 0.2884,
-                                    'ClusterGAN': 0.2965, 
-                                    'VADE': 0.2605, 
-                                    'RES_CNN+CNRV+IDEC': 0.3709, 
-                                    'RES_CNN+CNRV+NONE': 0.3832}
-
-
-def get_bubble_data(methods, measure_name):
-    time = []
-    for m in methods:
-        time.append(time_methods_dict[m])
-    
-    time_text = []
-    for t in time:
-        time_text.append('Runtime: ' + str(t))
-
-    y = []
-    for m in methods:
-        if measure_name == 'RI':
-            y.append(performance_time_methods_dict_ri[m])
-        elif measure_name == 'ARI':
-            y.append(performance_time_methods_dict_ari[m])
-        elif measure_name == 'NMI':
-            y.append(performance_time_methods_dict_nmi[m])
-    
-    import numpy as np
-    
-    idxs = np.argsort(time)
-    time = np.array(time)[idxs]
-    time_text = np.array(time_text)[idxs]
-    methods = np.array(methods)[idxs]
-    y = np.array(y)[idxs]
-
-    return time, time_text, methods, y
+significance_optons = ['0.1','0.05']
+stat_test_options = ['nemenyi','bonferroni-dunn']
 
 
 
 def find_datasets(clusters_size, lengths_size, types):
-    df = pd.read_csv('./data/characteristics.csv')
-
+    df = pd.read_csv('data/characteristics.csv')
     def f(row):
         if row['SeqLength'] < 100:
             val = 'VERY-SMALL(<100)'
@@ -241,13 +95,6 @@ list_length = [16,32,64,128,256,512,768,1024]
 # oracle = ['GENIE','MORTY']
 
 
-description_intro3 = f"""
-Clustering is one of the most popular time-series tasks because it enables unsupervised data exploration and often serves as a subroutine or 
-preprocessing step for other tasks. Despite being the subject of active research for decades across disciplines, only limited efforts focused on 
-benchmarking clustering methods for time series. Therefore, we comprehensively evaluate 80 time-series clustering methods spanning 9 different 
-classes from the data mining, machine learning, and deep learning literature.
-"""
-
 description_intro1 = f"""
 Symbolic Representation, a dimensionality reduction technique that transforms time series to a string of discrete symbols, has received increasing attention in critical downstream tasks such as indexing, and classification.
 Despite vast progress in this area, the majority of solutions still rely on a well-established method for its simplicity, which has been proposed for two decades. Unfortunately, these methods are far from optimal, as they fail to capture the disproportionate importance within the alphabet dictionary, leading to a loss of information. To address these issues, we propose SPARTAN, a data-adaptive symbolic representation for time series data analysis. 
@@ -260,9 +107,9 @@ description_intro2 = f"""
 
 ## Contributors
 
-* [Ryan DeMilt](https://github.com/ryanpdemilt) (Ohio State University)
-* [Fan Yang](https://github.com/Ivan-Fan) (Ohio State University)
-* [John Paparrizos](https://www.paparrizos.org/) (Ohio State University)
+* [Ryan DeMilt](https://github.com/ryanpdemilt) (Ohio State University) (demilt.4@osu.edu)
+* [Fan Yang](https://github.com/Ivan-Fan) (Ohio State University) (yang.7007@osu.edu)
+* [John Paparrizos](https://www.paparrizos.org/) (Ohio State University) (paparrizos.1@osu.edu)
 
 ## Datasets
 
@@ -275,8 +122,10 @@ For the preprocessing steps check [here](https://github.com/thedatumorg/UCRArchi
 
 ## Models
 
-We compiled a Python library with state-of-the-art time-series clustering models so that all the comparisons are performed under the 
-same framework for a consistent evaluation in terms of both performance and efficiency.
+We evaluate using a broad survey of time series symbolic representation methodologies. We separate these into three categories. The Symbolic Aggregate Approximation (SAX) and variant methods, which discretize the time series by splitting the series into segments and assign symbols to each second based on summary statistics such as the mean, min, max, a combination. Some of the methods introduce bespoke features to summarize the series segment such as trend or direction features.
+The second type makes use of the Discrete Fourier Transform to summarize entire time series with some loss of high frequency information. This method, the Symbolic Fourier Analysis (SFA) has been broadly applied and seen wide adoption in dictionary classification methods since its release, being used as the central component of classifiers such as BOSS, WEASEL, and TDE among others.
+The final representationt type we explore is the newly introduced Symbolic PCA Representation for Time Series ANalytics (SPARTAN). SPARTAN exploits information from the entire dataset using well known dimensionality reduction techniques and utilizes optimized allocation of storage resources to make superior use of the representation space available to the model. These improvements lead to SPARTAN achieving 2X better tightness of lower bounding and statistically significant improvements in classification downstream tasks. SPARTAN also improves by 2X inference runtime performance compared to the current best solutions.
+We use this set of methods to comprehensively survey the space of time series classification methods, and provide a web-based interface to explore the relative performance of these tools.
 
 """
 
@@ -286,266 +135,108 @@ The archive consists of a collection of 128 datasets sourced from different sens
 domains. All datasets in the archive span between 40 to 24000 time-series and have lengths varying from 15 to 2844. Datasets are z-normalized, 
 and each time-series in the dataset belongs to only one class. There is a small subset of datasets in the archive containing missing values and 
 varying lengths. We employ linear interpolation to fill the missing values and resample shorter time series to reach the longest time series 
-in each dataset.
+in each dataset. Here we present the characteritics of each dataset in the UCR archive.
 """
 
+text_description_models = f"""
+We present the models which are being compared here, each with a short description of their methodology and a citation to the work in which they were introduced.
 
-
-text_description_models1 = f"""
-We have implemented 80 methods from 9 classes of time-series clustering methods proposed for univariate time series. The following table 
-lists the methods considered:
-"""
-
-
-
-
-text_description_models2 = f"""
-### <span style='color:Tomato'>Partitional Clustering</span>
-
-| <span style="background-color:DarkSlateGray;color:LavenderBlush;font-weight:bold"> Clustering Method </span>  | <span style='background-color:DarkSlateGray;color:LavenderBlush;font-weight:bold'> Distance Measure / Feature Vector </span> | <span style='background-color:DarkSlateGray;color:LavenderBlush;font-weight:bold'> Reference  </span> |
+| <span style="background-color:DarkSlateGray;color:LavenderBlush;font-weight:bold"> Symbolic Representation </span>  | <span style='background-color:DarkSlateGray;color:LavenderBlush;font-weight:bold'> Description </span> | <span style='background-color:DarkSlateGray;color:LavenderBlush;font-weight:bold'> Reference  </span> |
 |:------------------|:----------------------------------|:------------------------------------|
-|𝑘-AVG              |ED                                 |                 [1]          |
-|𝑘-Shape              |SBD                                 |          [3]                 |
-|𝑘-SC              |STID                                 |            [5]               |
-|𝑘-DBA              |DTW                                 |           [4]                |
-|PAM             |MSM                                 |           [2]                 |
-|PAM              |TWED                                 |       [2]                     |
-|PAM              |ERP                                 |        [2]                    |
-|PAM              |SBD                                 |         [2]                   |
-|PAM              |SWALE                                 |       [2]                     |
-|PAM              |DTW                                 |           [2]                 |
-|PAM              |EDR                                 |        [2]                    |
-|PAM              |LCSS                                 |       [2]                     |
-|PAM              |ED                                 |          [2]                  |
-
-
-### <span style='color:Tomato'>Kernel Clustering</span> 
-| <span style="background-color:DarkSlateGray;color:LavenderBlush;font-weight:bold"> Clustering Method </span>  | <span style='background-color:DarkSlateGray;color:LavenderBlush;font-weight:bold'> Distance Measure / Feature Vector </span> | <span style='background-color:DarkSlateGray;color:LavenderBlush;font-weight:bold'> Reference  </span> |
-|:------------------|:----------------------------------|:------------------|
-| KKM              | SINK                                 |     [6]              |
-| KKM              | GAK                                 |       [6]            |
-| KKM              | KDTW                                 |      [6]             |
-| KKM              | RBF                                 |      [6]             |
-| SC              | SINK                                 |        [7]           |
-| SC              | GAK                                 |        [7]           |
-| SC              | KDTW                                 |      [7]             |
-| SC              | RBF                                 |       [7]            |
-
-
-### <span style='color:Tomato'>Density Clustering</span> 
-| <span style="background-color:DarkSlateGray;color:LavenderBlush;font-weight:bold"> Clustering Method </span>  | <span style='background-color:DarkSlateGray;color:LavenderBlush;font-weight:bold'> Distance Measure / Feature Vector </span> | <span style='background-color:DarkSlateGray;color:LavenderBlush;font-weight:bold'> Reference  </span> |
-|:------------------|:----------------------------------|:------------------------|
-| DBSCAN              | ED                                 |         [8]             |
-| DBSCAN              | SBD                                 |       [8]               |
-| DBSCAN              | MSM                                 |       [8]               |
-| DP              | ED                                 |        [10]              |
-| DP              | SBD                                 |       [10]               |
-| DP              | MSM                                 |       [10]               |
-| OPTICS              | ED                                 |         [9]             |
-| OPTICS              | SBD                                 |         [9]             |
-| OPTICS              | MSM                                 |         [9]             |
-
-
-### <span style='color:Tomato'>Hierarchical Clustering</span> 
-| <span style="background-color:DarkSlateGray;color:LavenderBlush;font-weight:bold"> Clustering Method </span>  | <span style='background-color:DarkSlateGray;color:LavenderBlush;font-weight:bold'> Distance Measure / Feature Vector </span> | <span style='background-color:DarkSlateGray;color:LavenderBlush;font-weight:bold'> Reference  </span> |
-|:------------------|:----------------------------------|:-------------------|
-| AGG              | ED                                 |         [11]           |
-| AGG              | SBD                                 |       [11]             |
-| AGG              | MSM                                 |       [11]             |
-| BIRCH              | -                                 |        [12]            |
-
-
-### <span style='color:Tomato'>Distribution Clustering</span> 
-| <span style="background-color:DarkSlateGray;color:LavenderBlush;font-weight:bold"> Clustering Method </span>  | <span style='background-color:DarkSlateGray;color:LavenderBlush;font-weight:bold'> Distance Measure / Feature Vector </span> | <span style='background-color:DarkSlateGray;color:LavenderBlush;font-weight:bold'> Reference  </span> |
-|:------------------|:----------------------------------|:-----------------------|
-| AP              | ED                                 |      [13]         |
-| AP              | SBD                                 |      [13]         |
-| AP              | MSM                                 |      [13]         |
-| GMM              | -                                 |      [14]         |
-
-
-### <span style='color:Tomato'>Shapelet Clustering</span> 
-| <span style="background-color:DarkSlateGray;color:LavenderBlush;font-weight:bold"> Clustering Method </span>  | <span style='background-color:DarkSlateGray;color:LavenderBlush;font-weight:bold'> Distance Measure / Feature Vector </span> | <span style='background-color:DarkSlateGray;color:LavenderBlush;font-weight:bold'> Reference  </span> |
-|:------------------|:----------------------------------|:----------------------|
-| UShapelet              | -                                 |       [15]                  |
-| LDPS              | -                                 |              [16]           |
-| USLM             | -                                 |           [17]               |
-
-
-### <span style='color:Tomato'>Semi-Supervised Clustering</span> 
-| <span style="background-color:DarkSlateGray;color:LavenderBlush;font-weight:bold"> Clustering Method </span>  | <span style='background-color:DarkSlateGray;color:LavenderBlush;font-weight:bold'> Distance Measure / Feature Vector </span> | <span style='background-color:DarkSlateGray;color:LavenderBlush;font-weight:bold'> Reference  </span> |
-|:------------------|:----------------------------------|:-------------------|
-| FeatTS              | -                                 |        [18]             |
-| SS-DTW             | -                                 |         [19]             |
-
-
-### <span style='color:Tomato'>Model and Feature Clustering</span> 
-| <span style="background-color:DarkSlateGray;color:LavenderBlush;font-weight:bold"> Clustering Method </span>  | <span style='background-color:DarkSlateGray;color:LavenderBlush;font-weight:bold'> Distance Measure / Feature Vector </span> | <span style='background-color:DarkSlateGray;color:LavenderBlush;font-weight:bold'> Reference  </span> |
-|:------------------|:----------------------------------|:----------------------------|
-| 𝑘-AVG             | AR-COEFF                                 |                 [20]              |
-| 𝑘-AVG             | AR-PVAL                                 |               [22]                |
-| 𝑘-AVG             | LPCC                                 |             [21]                  |
-| 𝑘-AVG             | CATCH22                                 |          [23]                     |
-| 𝑘-AVG             | ES-COEFF                                 |           [22]                    |
-
-
-### <span style='color:Tomato'>Deep Learning Clustering</span> 
-| <span style="background-color:DarkSlateGray;color:LavenderBlush;font-weight:bold"> Clustering Method </span>  | <span style='background-color:DarkSlateGray;color:LavenderBlush;font-weight:bold'> Distance Measure / Feature Vector </span> | <span style='background-color:DarkSlateGray;color:LavenderBlush;font-weight:bold'> Reference  </span> |
-|:------------------|:----------------------------------|:-------------------------------------|
-| IDEC            | -                                 |               [27]                |
-| DEC            | -                                 |             [26]                  |
-| DTC           | -                                 |              [29]                  |
-| DTCR            | -                                 |                [28]               |
-| SOM-VAE            | -                                 |               [30]                |
-| DEPICT           | -                                 |             [31]                   |
-| SDCN            | -                                 |                 [32]              |
-| ClusterGAN            | -                                 |           [34]                    |
-| VADE            | -                                 |              [33]                 |
-| DCN            | -                                 |              [25]                 |
-
-
-** Note: Results for LDPS and USLM methods are not mentioned because of thier infeasible runtimes on large datasets.
-
-# References
-
-[1] MacQueen, J. "Some methods for classiﬁcation and analysis of multivariate observations." In Proc. 5th Berkeley Symposium on Math., Stat., and Prob, p. 281. 1965.
-<br>
-[2] Kaufman, Leonard, and Peter J. Rousseeuw. Finding groups in data: an introduction to cluster analysis. John Wiley & Sons, 2009.
-<br>
-[3] Paparrizos, John, and Luis Gravano. "k-shape: Efficient and accurate clustering of time series." In Proceedings of the 2015 ACM SIGMOD international conference on management of data, pp. 1855-1870. 2015.
-<br>
-(4) Petitjean, François, Alain Ketterlin, and Pierre Gançarski. "A global averaging method for dynamic time warping, with applications to clustering." Pattern recognition 44, no. 3 (2011): 678-693.
-<br>
-[5] Yang, Jaewon, and Jure Leskovec. "Patterns of temporal variation in online media." In Proceedings of the fourth ACM international conference on Web search and data mining, pp. 177-186. 2011.
-<br>
-[6] Dhillon, Inderjit S., Yuqiang Guan, and Brian Kulis. "Kernel k-means: spectral clustering and normalized cuts." In Proceedings of the tenth ACM SIGKDD international conference on Knowledge discovery and data mining, pp. 551-556. 2004.
-<br>
-[7] Ng, Andrew, Michael Jordan, and Yair Weiss. "On spectral clustering: Analysis and an algorithm." Advances in neural information processing systems 14 (2001).
-<br>
-[8] Ester, Martin, Hans-Peter Kriegel, Jörg Sander, and Xiaowei Xu. "A density-based algorithm for discovering clusters in large spatial databases with noise." In kdd, vol. 96, no. 34, pp. 226-231. 1996.
-<br>
-[9] Ankerst, Mihael, Markus M. Breunig, Hans-Peter Kriegel, and Jörg Sander. "OPTICS: Ordering points to identify the clustering structure." ACM Sigmod record 28, no. 2 (1999): 49-60.
-<br>
-[10] Rodriguez, Alex, and Alessandro Laio. "Clustering by fast search and find of density peaks." science 344, no. 6191 (2014): 1492-1496.
-<br>
-[11] Kaufman, Leonard, and Peter J. Rousseeuw. Finding groups in data: an introduction to cluster analysis. John Wiley & Sons, 2009.
-<br>
-[12] Zhang, Tian, Raghu Ramakrishnan, and Miron Livny. "BIRCH: an efficient data clustering method for very large databases." ACM sigmod record 25, no. 2 (1996): 103-114.
-<br>
-[13] Frey, Brendan J., and Delbert Dueck. "Clustering by passing messages between data points." science 315, no. 5814 (2007): 972-976.
-<br>
-[14] Dempster, Arthur P., Nan M. Laird, and Donald B. Rubin. "Maximum likelihood from incomplete data via the EM algorithm." Journal of the royal statistical society: series B (methodological) 39, no. 1 (1977): 1-22.
-<br>
-[15] Zakaria, Jesin, Abdullah Mueen, and Eamonn Keogh. "Clustering time series using unsupervised-shapelets." In 2012 IEEE 12th International Conference on Data Mining, pp. 785-794. IEEE, 2012.
-<br>
-[16] Lods, Arnaud, Simon Malinowski, Romain Tavenard, and Laurent Amsaleg. "Learning DTW-preserving shapelets." In Advances in Intelligent Data Analysis XVI: 16th International Symposium, IDA 2017, London, UK, October 26–28, 2017, Proceedings 16, pp. 198-209. springer International Publishing, 2017.
-<br>
-[17] Zhang, Qin, Jia Wu, Hong Yang, Yingjie Tian, and Chengqi Zhang. "Unsupervised feature learning from time series." In IJCAI, pp. 2322-2328. 2016.
-<br>
-[18] Tiano, Donato, Angela Bonifati, and Raymond Ng. "FeatTS: Feature-based Time Series Clustering." In Proceedings of the 2021 International Conference on Management of Data, pp. 2784-2788. 2021.
-<br>
-[19] Dau, Hoang Anh, Nurjahan Begum, and Eamonn Keogh. "Semi-supervision dramatically improves time series clustering under dynamic time warping." In Proceedings of the 25th ACM International on Conference on Information and Knowledge Management, pp. 999-1008. 2016.
-<br>
-[20] Piccolo, Domenico. "A distance measure for classifying ARIMA models." Journal of time series analysis 11, no. 2 (1990): 153-164.
-<br>
-[21] Kalpakis, Konstantinos, Dhiral Gada, and Vasundhara Puttagunta. "Distance measures for effective clustering of ARIMA time-series." In Proceedings 2001 IEEE international conference on data mining, pp. 273-280. IEEE, 2001.
-<br>
-[22] Maharaj, Elizabeth Ann. "Cluster of Time Series." Journal of Classification 17, no. 2 (2000).
-<br>
-[23] Lubba, Carl H., Sarab S. Sethi, Philip Knaute, Simon R. Schultz, Ben D. Fulcher, and Nick S. Jones. "catch22: CAnonical Time-series CHaracteristics: Selected through highly comparative time-series analysis." Data Mining and Knowledge Discovery 33, no. 6 (2019): 1821-1852.
-<br>
-[24] Fulcher, Ben D., and Nick S. Jones. "hctsa: A computational framework for automated time-series phenotyping using massive feature extraction." Cell systems 5, no. 5 (2017): 527-531.
-<br>
-[25] Yang, Bo, Xiao Fu, Nicholas D. Sidiropoulos, and Mingyi Hong. "Towards k-means-friendly spaces: Simultaneous deep learning and clustering." In international conference on machine learning, pp. 3861-3870. PMLR, 2017.
-<br>
-[26] Xie, Junyuan, Ross Girshick, and Ali Farhadi. "Unsupervised deep embedding for clustering analysis." In International conference on machine learning, pp. 478-487. PMLR, 2016.
-<br>
-[27] Guo, Xifeng, Long Gao, Xinwang Liu, and Jianping Yin. "Improved deep embedded clustering with local structure preservation." In Ijcai, pp. 1753-1759. 2017.
-<br>
-[28] Ma, Qianli, Jiawei Zheng, Sen Li, and Gary W. Cottrell. "Learning representations for time series clustering." Advances in neural information processing systems 32 (2019).
-<br>
-[29] Madiraju, Naveen Sai. "Deep temporal clustering: Fully unsupervised learning of time-domain features." PhD diss., Arizona State University, 2018.
-<br>
-[30] Fortuin, Vincent, Matthias Hüser, Francesco Locatello, Heiko Strathmann, and Gunnar Rätsch. "Som-vae: Interpretable discrete representation learning on time series." arXiv preprint arXiv:1806.02199 (2018).
-<br>
-[31] Ghasedi Dizaji, Kamran, Amirhossein Herandi, Cheng Deng, Weidong Cai, and Heng Huang. "Deep clustering via joint convolutional autoencoder embedding and relative entropy minimization." In Proceedings of the IEEE international conference on computer vision, pp. 5736-5745. 2017.
-<br>
-[32] Bo, Deyu, Xiao Wang, Chuan Shi, Meiqi Zhu, Emiao Lu, and Peng Cui. "Structural deep clustering network." In Proceedings of the web conference 2020, pp. 1400-1410. 2020.
-<br>
-[33] Jiang, Zhuxi, Yin Zheng, Huachun Tan, Bangsheng Tang, and Hanning Zhou. "Variational deep embedding: A generative approach to clustering." CoRR, abs/1611.05148 1 (2016).
-<br>
-[34] Ghasedi, Kamran, Xiaoqian Wang, Cheng Deng, and Heng Huang. "Balanced self-paced learning for generative adversarial clustering network." In Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition, pp. 4391-4400. 2019.
-
-
+||  **SAX and SAX-variant methods**
+|SAX             | SAX builds on Piecewise Aggregate Approximation to approximate a time series using the means of equal-length, non-overlapping segments of the time series. SAX converts these approximations to symbols by dividing the range of possible values in the number line according to equi-probability sections of a normal distribution with mean zero and unit variance.|                 [2]          |
+|ESAX              | ESAX uses a similar methodology to SAX but extracts two additional features from each segment: the minimum and maximum value of the segments. This is done in order to capture more information from the segments than the mean, though this triples the storage requiremnts for an equal number of segments between methods.                                |          [3]                 |
+|TSFSAX              |  TSFSAX introduces a novel trend feature based on trend points in the segments which is later discretized along with the mean.                           |            [4]               |
+|SAX-DR             | SAX-DR derives an additional categorization of the trend of each segment, classifying each as concave, convex, or linear in order to encode local shape of the segments.                              |           [5]                |
+|SAX-VFD          |SAX-VFD adopts 18 features from three categories: statistical, entropy and fluctuation features. An optimization process is then applied to determine an optimal feature fector to be used from among these.                         |           [6]                 |
+|1D-SAX          |1d-SAX extends the classic SAX feature with a new slope feature extracted using linear regression on each segment.|       [7]                     |
+| |**DFT-Based Representation Method**
+|SFA           | SFA, leverages Discrete Fourier Transform (DFT) to capture the frequency information from the Fourier domain. In addition, Multiple Coefficient Binning (MCB) is also proposed as the standard discretization technique for alphabet dictionaries                                |        [8]                    |
+|  | **Newly Proposed Symbolic Representation Method**
+|SPARTAN              | SPARTAN utilizes a data adaptive dimensionality reduction method to extract information from the entire available training set. This method discretizes the space in an uneven manner utilizing the importance of each subspace in the approximation step to guide the size of the alphabet allocated to it. Through this SPARTAN is able to achieve a rich and informative symbolic representation with knowledge extracted from trends across the entire dataset and budgeted by importance of the sampled subspaces.                               |         [9]                   |
 """
 
-list_references = f"""
-(1) MacQueen, J. "Some methods for classiﬁcation and analysis of multivariate observations." In Proc. 5th Berkeley Symposium on Math., Stat., and Prob, p. 281. 1965.
-<br>
-(2) Kaufman, Leonard, and Peter J. Rousseeuw. Finding groups in data: an introduction to cluster analysis. John Wiley & Sons, 2009.
-<br>
-(3) Paparrizos, John, and Luis Gravano. "k-shape: Efficient and accurate clustering of time series." In Proceedings of the 2015 ACM SIGMOD international conference on management of data, pp. 1855-1870. 2015.
-<br>
-(4) Petitjean, François, Alain Ketterlin, and Pierre Gançarski. "A global averaging method for dynamic time warping, with applications to clustering." Pattern recognition 44, no. 3 (2011): 678-693.
-<br>
-(5) Yang, Jaewon, and Jure Leskovec. "Patterns of temporal variation in online media." In Proceedings of the fourth ACM international conference on Web search and data mining, pp. 177-186. 2011.
-<br>
-(6) Dhillon, Inderjit S., Yuqiang Guan, and Brian Kulis. "Kernel k-means: spectral clustering and normalized cuts." In Proceedings of the tenth ACM SIGKDD international conference on Knowledge discovery and data mining, pp. 551-556. 2004.
-<br>
-(7) Ng, Andrew, Michael Jordan, and Yair Weiss. "On spectral clustering: Analysis and an algorithm." Advances in neural information processing systems 14 (2001).
-<br>
-(8) Ester, Martin, Hans-Peter Kriegel, Jörg Sander, and Xiaowei Xu. "A density-based algorithm for discovering clusters in large spatial databases with noise." In kdd, vol. 96, no. 34, pp. 226-231. 1996.
-<br>
-(9) Ankerst, Mihael, Markus M. Breunig, Hans-Peter Kriegel, and Jörg Sander. "OPTICS: Ordering points to identify the clustering structure." ACM Sigmod record 28, no. 2 (1999): 49-60.
-<br>
-(10) Rodriguez, Alex, and Alessandro Laio. "Clustering by fast search and find of density peaks." science 344, no. 6191 (2014): 1492-1496.
-<br>
-(11) Kaufman, Leonard, and Peter J. Rousseeuw. Finding groups in data: an introduction to cluster analysis. John Wiley & Sons, 2009.
-<br>
-(12) Zhang, Tian, Raghu Ramakrishnan, and Miron Livny. "BIRCH: an efficient data clustering method for very large databases." ACM sigmod record 25, no. 2 (1996): 103-114.
-<br>
-(13) Frey, Brendan J., and Delbert Dueck. "Clustering by passing messages between data points." science 315, no. 5814 (2007): 972-976.
-<br>
-(14) Dempster, Arthur P., Nan M. Laird, and Donald B. Rubin. "Maximum likelihood from incomplete data via the EM algorithm." Journal of the royal statistical society: series B (methodological) 39, no. 1 (1977): 1-22.
-<br>
-(15) Zakaria, Jesin, Abdullah Mueen, and Eamonn Keogh. "Clustering time series using unsupervised-shapelets." In 2012 IEEE 12th International Conference on Data Mining, pp. 785-794. IEEE, 2012.
-<br>
-(16) Lods, Arnaud, Simon Malinowski, Romain Tavenard, and Laurent Amsaleg. "Learning DTW-preserving shapelets." In Advances in Intelligent Data Analysis XVI: 16th International Symposium, IDA 2017, London, UK, October 26–28, 2017, Proceedings 16, pp. 198-209. springer International Publishing, 2017.
-<br>
-(17) Zhang, Qin, Jia Wu, Hong Yang, Yingjie Tian, and Chengqi Zhang. "Unsupervised feature learning from time series." In IJCAI, pp. 2322-2328. 2016.
-<br>
-(18) Tiano, Donato, Angela Bonifati, and Raymond Ng. "FeatTS: Feature-based Time Series Clustering." In Proceedings of the 2021 International Conference on Management of Data, pp. 2784-2788. 2021.
-<br>
-(19) Dau, Hoang Anh, Nurjahan Begum, and Eamonn Keogh. "Semi-supervision dramatically improves time series clustering under dynamic time warping." In Proceedings of the 25th ACM International on Conference on Information and Knowledge Management, pp. 999-1008. 2016.
-<br>
-(20) Piccolo, Domenico. "A distance measure for classifying ARIMA models." Journal of time series analysis 11, no. 2 (1990): 153-164.
-<br>
-(21) Kalpakis, Konstantinos, Dhiral Gada, and Vasundhara Puttagunta. "Distance measures for effective clustering of ARIMA time-series." In Proceedings 2001 IEEE international conference on data mining, pp. 273-280. IEEE, 2001.
-<br>
-(22) Maharaj, Elizabeth Ann. "Cluster of Time Series." Journal of Classification 17, no. 2 (2000).
-<br>
-(23) Lubba, Carl H., Sarab S. Sethi, Philip Knaute, Simon R. Schultz, Ben D. Fulcher, and Nick S. Jones. "catch22: CAnonical Time-series CHaracteristics: Selected through highly comparative time-series analysis." Data Mining and Knowledge Discovery 33, no. 6 (2019): 1821-1852.
-<br>
-(24) Fulcher, Ben D., and Nick S. Jones. "hctsa: A computational framework for automated time-series phenotyping using massive feature extraction." Cell systems 5, no. 5 (2017): 527-531.
-<br>
-(25) Yang, Bo, Xiao Fu, Nicholas D. Sidiropoulos, and Mingyi Hong. "Towards k-means-friendly spaces: Simultaneous deep learning and clustering." In international conference on machine learning, pp. 3861-3870. PMLR, 2017.
-<br>
-(26) Xie, Junyuan, Ross Girshick, and Ali Farhadi. "Unsupervised deep embedding for clustering analysis." In International conference on machine learning, pp. 478-487. PMLR, 2016.
-<br>
-(27) Guo, Xifeng, Long Gao, Xinwang Liu, and Jianping Yin. "Improved deep embedded clustering with local structure preservation." In Ijcai, pp. 1753-1759. 2017.
-<br>
-(28) Ma, Qianli, Jiawei Zheng, Sen Li, and Gary W. Cottrell. "Learning representations for time series clustering." Advances in neural information processing systems 32 (2019).
-<br>
-(29) Madiraju, Naveen Sai. "Deep temporal clustering: Fully unsupervised learning of time-domain features." PhD diss., Arizona State University, 2018.
-<br>
-(30) Fortuin, Vincent, Matthias Hüser, Francesco Locatello, Heiko Strathmann, and Gunnar Rätsch. "Som-vae: Interpretable discrete representation learning on time series." arXiv preprint arXiv:1806.02199 (2018).
-<br>
-(31) Ghasedi Dizaji, Kamran, Amirhossein Herandi, Cheng Deng, Weidong Cai, and Heng Huang. "Deep clustering via joint convolutional autoencoder embedding and relative entropy minimization." In Proceedings of the IEEE international conference on computer vision, pp. 5736-5745. 2017.
-<br>
-(32) Bo, Deyu, Xiao Wang, Chuan Shi, Meiqi Zhu, Emiao Lu, and Peng Cui. "Structural deep clustering network." In Proceedings of the web conference 2020, pp. 1400-1410. 2020.
-<br>
-(33) Jiang, Zhuxi, Yin Zheng, Huachun Tan, Bangsheng Tang, and Hanning Zhou. "Variational deep embedding: A generative approach to clustering." CoRR, abs/1611.05148 1 (2016).
-<br>
-(34) Ghasedi, Kamran, Xiaoqian Wang, Cheng Deng, and Heng Huang. "Balanced self-paced learning for generative adversarial clustering network." In Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition, pp. 4391-4400. 2019.
+text_1nn_classification_description = f"""
+In this section we present the results for the 1-Nearest Neighbor classification task. In this experiment all methods are given an equal size representation space of 12 symbols per word and an alphabet size of 4 (since SPRATAN dynamically calculates alphabets it is given a bit budget of 24 for this experiment to give an equal number of possible generated words). Each time series is converted to symbolic representations of the appropriate size and classification is carried out by identifying the nearest neighbor of a queried time series in the training set and assigning the same label. This requires a meaningful distance measure over symbolic representations, for fairness it is ideal to use the same distance measure across all representation methods so that no method is unfairly advantaged by a measure which makes use of internal information prior to the symbolic representation step such as histogram breakpoints. To perform this evaluation we suggest a simple but effective metric which takes the L1-distance with respect to the ordered alphabets of symbols, which we reproduce as follows.
 """
 
+test_symbolic_l1_distance = f"""
+    d_{{l1}}(\\tilde{{Q}},\\tilde{{C}}) = \\sum_{{i=1}}^{{\\omega}} \\lvert i(\\tilde{{Q}}_i) - i(\\tilde{{C}}_i) \\rvert \\text{{where,}} i(\\tilde{{Q}}_i):\\Phi \\rightarrow \\{{1,\\ldots,|\\Phi|-1\\}} \\\\ \\text{{ and where }} \\omega \\text{{ is the word length, }} \\alpha \\text{{ is the alphabet size,}} \\\\ \\text{{and the alphabet }} \\Phi \\text{{ can be naturally ordered and assigned to an index with natural numbers via function: }} i(\\cdot).
+"""
+# text_symbolic_l1_distance_description = f"""
+#     \\text{{where }} \\omega \\text{{ is the word length, }} \\alpha \\text{{is the alphabet size, and the alphabet }} \\Phi \\text{{ can be naturally ordered and assigned to an index with natural numbers.}}
+# """
+text_1nn_classification_description_2 = f"""
+    We provide functionality to view the classification results through multiple views, each explained with text on the corresponding view, along with analysis of the results.
+"""
+
+text_boxplot_explanation = f"""
+This panel presents a boxplot displaying the average classification accuracy for this task and allows the user to select which methods they would like to examine the accuracy for, the second selection box allows the user to choose from among the available metrics for the classification type being displayed. Below this plot the user can find a table of the raw classification accuracies for each method and each dataset for a full comparison.
+"""
+
+text_pairwise_comparison = f"""
+On this panel we present pairwise accuracy comparisons, the user can select combinations of symbolic representation method and distance metric, results above the diagonal line are datasets where method 2 exhibits superior classification accuracy to method 1 and the reverse for below the diagonal line.
+"""
+
+text_cd_diagram_explanation = f"""
+Here we present the the critical difference diagram for our results, introduced by [10]. This diagram aims to rigourously evaluate the performance of multiple classifiers over multiple datasets. Since the individual classification accuracies may not be commensurably comparable, we instead present the ranking of each method on that dataset relative to the other methods (i.e. the best performing method receives rank 1, the second best rank 2). The CD diagram shows each method with a marker under its average ranking over all 128 datasets. A post-hoc test is then applied to find cliques of methods whose performance is not statistically significantly different. A clique of methods is shown by a horizontal line between two methods. If two methods have no line between them then these methods have been observed to have a statistically significant difference in accuracy based on the sample of classification accuracies from the 128 datasets. Here we allow for the presentation of two methods for clique finding, the Nemenyi and Bonferroni-Dunn tests. We also have available two common significance levels to display cliques among the data. We also note that in the community it is generally noted that to reasonably observe significance between methods, one needs ~10 datasets per method under observation ideally. For this reason it is recommended under these conditions to perform explanations of twelve or fewer methods, given there are 128 observed datasets. 
+"""
+
+text_bop_classification_description = f"""
+The second classification task we present is the Bag-Of-Words task. In this task we first divide the input time series dataset into sliding, overlapping windows of length 12. To each time series we apply a symbolic representation method and assign a word of length 4 and alphabet size 4 (dynamically allocated with a bit budget of 8 in the case of SPARTAN). The collection of words generated for each time series forms a histogram which can be viewed as the occurences of a given pattern in that time series. This allows the symbolic representation method to serve as a feature extractor to derive important patterns from the input time series. For the BOP task we perform 1-NN classification using these histograms. Here it is important to have a distance metric which effectively captures the distance between these histograms which when normalized can be considered as probability distributions. Many distance metrics exist for this comparison and there is a rich literature of work on comparing probability measures. We present here the Euclidean distance between histograms, the BOSS distance [11], the Cosine-similarity, and the KL-Divergence.
+"""
+
+text_tlb_description = f"""
+We show here the comparison of SAX, SFA, and SPARTAN on lower bounding the euclidean distance, when equipped with a function MINDIST which is guaranteed to lower bound the euclidean distance. We note that SFA does not include a lower bouding distance between two symbolic representations in its work, presenting a lower bound between a non discretized DFT and an SFA representation. Due to this we show TLB results for SFA using a modified MINDIST function, this function holds as a lower bound for the euclidean distance in most cases but does not have a corresponding proof. Therefore the primary comparison is with SAX in this case and SFA is included for completeness. WE present comparative plots for the tightness of lower bound as the word length and alphabet size parameters scale for each method. We also present a critical diagram to show a statistical comparison of the tightness of lower bounding capabilities between methods.
+"""
+
+text_runtime_description = f"""
+This page aims to show the runtime, accuracy tradeoff between methods. To evaluate the runtime of methods we measure the time number of seconds per time series to transform each dataset in the UCR archive. To further illuminate the differences between methods we present runtime in terms of total runtime (training and inference), as well as training and inference runtime separately. In doing so we highlight that the runtime/accuracy tradeoff can have significant differences between training and testing phases, and these differences have large relevance for application settings of symbolic representations. 
+"""
+references = f"""
+[1] Yanping Chen, Eamonn Keogh, Bing Hu, Nurjahan Begum, Anthony Bagnall, Abdullah
+Mueen and Gustavo Batista (2015). The UCR Time Series Classification Archive. URL
+www.cs.ucr.edu/~eamonn/time_series_data/
+
+[2] Jessica Lin, Eamonn Keogh, Stefano Lonardi, and Bill Chiu. 2003. A symbolic
+representation of time series, with implications for streaming algorithms. In
+Proceedings of the 8th ACM SIGMOD workshop on Research issues in data mining
+and knowledge discovery. 2–11.
+
+[3] Battuguldur Lkhagva, Yu Suzuki, and Kyoji Kawagoe. 2006. Extended SAX:
+Extension of symbolic aggregate approximation for financial time series data
+representation. DEWS2006 4A-i8 7 (2006).
+
+[4] Tianyu Li, Fang-Yan Dong, and Kaoru Hirota. 2013. Distance Measure for Sym-
+bolic Approximation Representation with Subsequence Direction for Time Series
+Data Mining. Journal of Advanced Computational Intelligence and Intelligent
+Informatics 17, 2 (2013), 263–271
+
+[5] Yufeng Yu, Yuelong Zhu, Dingsheng Wan, Qun Zhao, and Huan Liu. 2019. A
+novel trend symbolic aggregate approximation for time series. arXiv preprint
+arXiv:1905.00421 (2019).
+
+[6] Lijuan Yan, Xiaotao Wu, and Jiaqing Xiao. 2022. An Improved Time Series
+Symbolic Representation Based on Multiple Features and Vector Frequency
+Difference. Journal of Computer and Communications 10, 06 (2022), 44–62.
+
+[7] Simon Malinowski, Thomas Guyet, René Quiniou, and Romain Tavenard. 2013.
+1d-sax: A novel symbolic representation for time series. In International Sympo-
+sium on Intelligent Data Analysis. Springer, 273–284.
+
+[8] Patrick Schäfer and Mikael Högqvist. 2012. SFA: a symbolic fourier approxima-
+tion and index for similarity search in high dimensional datasets. In Proceedings
+of the 15th International Conference on Extending Database Technology (Berlin,
+Germany) (EDBT ’12). Association for Computing Machinery, New York, NY,
+USA, 516–527. https://doi.org/10.1145/2247596.224765
+
+[9] Ryan DeMilt, Fan Yang, and John Paparrizos. 2024. SPARTAN: Data-adaptive
+Symbolic Representations for Time Series Data Analysis. (2024). Under review
+
+[10] Janez Demšar. 2006. Statistical Comparisons of Classifiers over Multiple Data
+Sets. J. Mach. Learn. Res. 7 (dec 2006), 1–30.
+
+[11] Patrick Schäfer. 2015. The BOSS is concerned with time series classification
+in the presence of noise. Data Min. Knowl. Discov. 29, 6 (nov 2015), 1505–1530.
+https://doi.org/10.1007/s10618-014-0377-7
+"""
