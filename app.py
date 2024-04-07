@@ -494,95 +494,94 @@ with tab_tlb:
         # all_metric = st.checkbox('Select all',key='all_tlbs')
         # if all_metric: tlb_dataset = container_tlb.multiselect('Select dataset',sorted(find_datasets(cluster_size, length_size, types)), sorted(find_datasets(cluster_size, length_size, types)))
         tlb_dataset = container_tlb.selectbox('Select dataset',sorted(find_datasets(cluster_size, length_size, types)),index=28)
-
         tlb_results = tlb_dfs[tlb_dataset]
-
         my_cmap = sns.color_palette("YlGnBu", as_cmap=True)
 
-        fig = plt.figure(figsize=(5,5))
-        ax = fig.add_subplot(projection='3d')
-        dx=dy=1
+        tlb_col1, tlb_col2 = st.columns(2)
 
-        fixed_w = st.slider('Fix Word Length',2,8,4)
-        fixed_w_results = tlb_results[tlb_results['w'] == fixed_w]
-        fixed_w_results = fixed_w_results.pivot(index='method',columns='a',values='tlb')
-        
-        xpos = np.arange(fixed_w_results.shape[0])
-        ypos = np.arange(fixed_w_results.shape[1])
+        with tlb_col1:
+            fig = plt.figure(figsize=(5,5))
+            ax = fig.add_subplot(projection='3d')
+            dx=dy=1
 
-        ax.set_xticks(xpos + dx/2)
-        ax.set_yticks(ypos + dy/2)
+            fixed_w = st.slider('Fix Word Length',2,8,4)
+            fixed_w_results = tlb_results[tlb_results['w'] == fixed_w]
+            fixed_w_results = fixed_w_results.pivot(index='method',columns='a',values='tlb')
+            
+            xpos = np.arange(fixed_w_results.shape[0])
+            ypos = np.arange(fixed_w_results.shape[1])
 
-        # create meshgrid 
-        # print xpos before and after this block if not clear
-        xpos, ypos = np.meshgrid(xpos, ypos)
-        xpos = xpos.flatten()
-        ypos = ypos.flatten()
-        # print(xpos)
-        # print(ypos)
+            ax.set_xticks(xpos + dx/2)
+            ax.set_yticks(ypos + dy/2)
 
-        # the bars starts from 0 attitude
-        zpos=np.zeros(fixed_w_results.shape).flatten()
+            # create meshgrid 
+            # print xpos before and after this block if not clear
+            xpos, ypos = np.meshgrid(xpos, ypos)
+            xpos = xpos.flatten()
+            ypos = ypos.flatten()
+            # print(xpos)
+            # print(ypos)
 
-        dz = fixed_w_results.values.ravel(order='F')
+            # the bars starts from 0 attitude
+            zpos=np.zeros(fixed_w_results.shape).flatten()
 
-        colors = [0,50,100]*fixed_w_results.shape[1]
-        colors = plt.cm.YlGnBu(colors)
+            dz = fixed_w_results.values.ravel(order='F')
 
-        ax.bar3d(xpos,ypos,zpos,dx,dy,dz,color=colors,shade=True)
+            colors = [0,50,100]*fixed_w_results.shape[1]
+            colors = plt.cm.YlGnBu(colors)
 
-        ax.invert_xaxis()
-        ax.yaxis.set_ticklabels(fixed_w_results.columns)
-        ax.xaxis.set_ticklabels(fixed_w_results.index)
-        ax.set_ylabel('Alphabet Size',labelpad=15)
-        ax.set_zlabel('TLB',labelpad=15)
-        ax.set_zlim(0,0.7)
+            ax.bar3d(xpos,ypos,zpos,dx,dy,dz,color=colors,shade=True)
 
-        st.markdown('## TLB Results for Scaling Alphabet Size w/ Fixed Word Length')
-        st.pyplot(fig)
+            ax.invert_xaxis()
+            ax.yaxis.set_ticklabels(fixed_w_results.columns)
+            ax.xaxis.set_ticklabels(fixed_w_results.index)
+            ax.set_ylabel('Alphabet Size',labelpad=15)
+            ax.set_zlabel('TLB',labelpad=15)
+            ax.set_zlim(0,0.7)
+            st.markdown('### TLB per Alphabet Size w/ Fixed Word Length')
+            st.pyplot(fig)
+        with tlb_col2:
+            fig = plt.figure(figsize=(5,5))
 
-        fig = plt.figure(figsize=(5,5))
+            fixed_a = st.slider('Fix Alphabet Size',3,10,4)
+            fixed_a_results = tlb_results[tlb_results['a'] == fixed_a] 
+            fixed_a_results = fixed_a_results.pivot(index='method',columns='w',values='tlb')
 
-        fixed_a = st.slider('Fix Alphabet Size',3,10,4)
-        fixed_a_results = tlb_results[tlb_results['a'] == fixed_a] 
-        fixed_a_results = fixed_a_results.pivot(index='method',columns='w',values='tlb')
+            fig = plt.figure(figsize=(5,5))
+            ax =fig.add_subplot(projection='3d')
 
-        fig = plt.figure(figsize=(5,5))
-        ax =fig.add_subplot(projection='3d')
+            xpos = np.arange(fixed_a_results.shape[0])
+            ypos = np.arange(fixed_a_results.shape[1])
 
-        xpos = np.arange(fixed_a_results.shape[0])
-        ypos = np.arange(fixed_a_results.shape[1])
+            ax.set_xticks(xpos + dx/2)
+            ax.set_yticks(ypos + dy/2)
 
-        ax.set_xticks(xpos + dx/2)
-        ax.set_yticks(ypos + dy/2)
+            # create meshgrid 
+            # print xpos before and after this block if not clear
+            xpos, ypos = np.meshgrid(xpos, ypos)
+            xpos = xpos.flatten()
+            ypos = ypos.flatten()
 
-        # create meshgrid 
-        # print xpos before and after this block if not clear
-        xpos, ypos = np.meshgrid(xpos, ypos)
-        xpos = xpos.flatten()
-        ypos = ypos.flatten()
+            # the bars starts from 0 attitude
+            zpos=np.zeros(fixed_a_results.shape).flatten()
 
-        # the bars starts from 0 attitude
-        zpos=np.zeros(fixed_a_results.shape).flatten()
+            dz = fixed_a_results.values.ravel(order='F')
 
-        dz = fixed_a_results.values.ravel(order='F')
-        print(dz)
+            colors = [0,50,100]*fixed_a_results.shape[1]
+            colors = plt.cm.YlGnBu(colors)
 
-        colors = [0,50,100]*fixed_a_results.shape[1]
-        colors = plt.cm.YlGnBu(colors)
+            ax.bar3d(xpos,ypos,zpos,dx,dy,dz,color=colors,shade=True)
 
-        ax.bar3d(xpos,ypos,zpos,dx,dy,dz,color=colors,shade=True)
-
-        ax.invert_xaxis()
-        ax.yaxis.set_ticklabels(fixed_a_results.columns)
-        ax.xaxis.set_ticklabels(fixed_a_results.index)
-        ax.set_ylabel('Word Length',labelpad=15)
-        ax.set_zlabel('TLB',labelpad=15)
-        ax.set_zlim(0,0.5)
+            ax.invert_xaxis()
+            ax.yaxis.set_ticklabels(fixed_a_results.columns)
+            ax.xaxis.set_ticklabels(fixed_a_results.index)
+            ax.set_ylabel('Word Length',labelpad=15)
+            ax.set_zlabel('TLB',labelpad=15)
+            ax.set_zlim(0,0.5)
 
 
-        st.markdown('## TLB Results for Scaling Word Length w/ Fixed Alphabet Size')
-        st.pyplot(fig)
+            st.markdown('### TLB per Word Length w/ Fixed Alphabet Size')
+            st.pyplot(fig)
     with tab_tlb_statplots:
         tlbs_subset = tlbs_all[tlbs_all['dataset'].isin(datasets)]
 
@@ -619,7 +618,6 @@ with tab_runtime:
     runtime_subset_mean = runtime_results_subset.groupby(by='method').agg({'acc':['mean'],'rank':['mean'],'train_time':['sum'],'pred_time':['sum'],'total_time':['sum']})
     runtime_subset_mean.reset_index(inplace=True)
     runtime_subset_mean.columns = runtime_subset_mean.columns.droplevel(1)
-    print(runtime_subset_mean.head())
 
     st.markdown('## Total Runtime vs. Accuracy Comparison (Train+Inference)')
     runtime_subset_mean.rename(columns={'train_time':'Training Runtime (ms/sample)','pred_time':'Inference Runtime (ms/sample)','total_time':'Total Runtime (ms/sample)','acc':'Mean Accuracy','rank':'Mean Rank'},inplace=True)

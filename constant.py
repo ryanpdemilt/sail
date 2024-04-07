@@ -120,9 +120,10 @@ This demonstration is organized as follows:
 
 ## Contributors
 
-* [Ryan DeMilt](https://github.com/ryanpdemilt) (Ohio State University) (demilt.4@osu.edu)
-* [Fan Yang](https://github.com/Ivan-Fan) (Ohio State University) (yang.7007@osu.edu)
+* [Ryan DeMilt*](https://github.com/ryanpdemilt) (Ohio State University) (demilt.4@osu.edu)
+* [Fan Yang*](https://github.com/Ivan-Fan) (Ohio State University) (yang.7007@osu.edu)
 * [John Paparrizos](https://www.paparrizos.org/) (Ohio State University) (paparrizos.1@osu.edu)
+
 
 ## Datasets
 
