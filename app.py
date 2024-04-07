@@ -18,7 +18,7 @@ import os
 
 from barchart import plotly_bar_charts_3d
 
-st. set_page_config(layout="wide") 
+st.set_page_config(layout="wide") 
 @st.cache_data
 def load_data():
     characteristics_df = pd.read_csv('data/characteristics.csv')
