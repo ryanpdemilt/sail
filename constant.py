@@ -92,18 +92,31 @@ list_measures = ['symbolic-l1','Euclid','BOSS','Cosine','KL-Div']
 
 list_length = [16,32,64,128,256,512,768,1024]
 
-# oracle = ['GENIE','MORTY']
 
 
 description_intro1 = f"""
-Symbolic Representation, a dimensionality reduction technique that transforms time series to a string of discrete symbols, has received increasing attention in critical downstream tasks such as indexing, and classification.
-Despite vast progress in this area, the majority of solutions still rely on a well-established method for its simplicity, which has been proposed for two decades. Unfortunately, these methods are far from optimal, as they fail to capture the disproportionate importance within the alphabet dictionary, leading to a loss of information. To address these issues, we propose SPARTAN, a data-adaptive symbolic representation for time series data analysis. 
-The system adopts data-adaptive approaches for data encoding tasks by intelligently adapting the alphabet dictionary across dimensions . 
-In general, SPARTAN exploits intrinsic dimensionality reduction properties to derive orthogonal latent subspaces. Based on this, SPARTAN is able to intelligently adapt the alphabet dictionary with an awareness of the disproportionate importance. To assist users in exploring this field, we also provide a web engine that incorporates 7 current state-of-the-art symbolic representation methods for a comprehensive evaluation on the downstream task. Through the interactive interface, we observe that SPARTAN significantly outperforms the current state-of-the-art methods over 128 diverse time series datasets, achieving 2X better tightness of lower bounding and statistically significant improvements in classification downstream tasks. Importantly, SPARTAN also improves by 2X inference runtime performance compared to the current best solution. Overall, this demonstration work provides users with an opportunity to delve into a novel time-series symbolic representation method, inspiring the direction of future study in this field.
+Symbolic Representation, a dimensionality reduction technique that transforms time series into a string of discrete symbols, has received increasing attention in downstream tasks such as similarity search, indexing, anomaly detection, and classification.
+Despite vast progress in this area, the majority of solutions still rely on a well-established method proposed two decades ago for its simplicity, despite other potential solutions with stronger representation power.
+Moreover, from the existing literature, there is a noticeable absence of a comprehensive study in this domain, highlighting a need for more in-depth investigation.
+Motivated by the aforementioned issues, we propose SAIL, a modular web engine serving two purposes: (i) to provide the first comprehensive evaluation studies on 7 state-of-the-art symbolic representation methods over 128 time-series datasets, the largest study in this area;
+(ii) to demonstrate the superiority of a recently proposed solution, SPARTAN, that mitigates the non-negligible drawbacks of the uniform balance in symbolic subspaces, which assumes a single alphabet size for each symbol.
+Through the interactive interface, SAIL facilitates users to explore, visualize, and comprehend the quantitative assessment results on various methods, datasets, and metrics.
+From diverse scenarios, SPARTAN has demonstrated superior performance across different dimensions.
+Overall, SAIL not only facilitates the most comprehensive evaluation study in this field, but also delivers new insights and concrete solutions, laying the groundwork for the next-generation symbolic representation solutions.
 """
 
 
 description_intro2 = f"""
+
+## User Guide
+
+This demonstration is organized as follows:
+- Datasets: An overview of the datasets used for comparison, sourced from the UCR Time Series Classification Archive [1], and their relevant sizes and data types. These datasets can be selected based on these characteristics using the sidebar to carry out analysis of the performance on specific sizes or types of data.
+- Methods: A review of the methods shown in this paper, along with summaries of their symbolic representation process and links to the source papers.
+- 1NN-Classification Accuracy: A review of the classification accuracy of equal sized representations for each symbolic reprsentation method using an equivalent distance metric for all methods. Presents average accuracy, pairwise, and ranked statistical comparisons.
+- BOP Classifcation Accuracy: A review of the important Bag-Of-Patterns classification setting with an extensive list of distance measures available for comparison.
+- Tightness of Lower Bound: An important characteristic of a symbolic representation method is the ability to lower bound the euclidean distance, a useful property for indexing applications, this page provides a tool for examining the scaling power of symbolic representations for producing tight lower bounds and the statistical tests to show superior performers under different settings.
+- Runtime Analysis: An examination of the runtime/accuracy tradeoff of the sampled symbolic reprsentation methods, presented both in terms of mean accuracy and rank over the chosen datasets and including the views on both the training and inference time requirements.
 
 ## Contributors
 
@@ -191,7 +204,7 @@ We show here the comparison of SAX, SFA, and SPARTAN on lower bounding the eucli
 """
 
 text_runtime_description = f"""
-This page aims to show the runtime, accuracy tradeoff between methods. To evaluate the runtime of methods we measure the time number of seconds per time series to transform each dataset in the UCR archive. To further illuminate the differences between methods we present runtime in terms of total runtime (training and inference), as well as training and inference runtime separately. In doing so we highlight that the runtime/accuracy tradeoff can have significant differences between training and testing phases, and these differences have large relevance for application settings of symbolic representations. 
+This page investigates the runtime, accuracy tradeoff between methods. To evaluate the runtime of methods we measure the time number of seconds per time series to transform each dataset in the UCR archive. To further illuminate the differences between methods we present runtime in terms of total runtime (training and inference), as well as training and inference runtime separately. In doing so we highlight that the runtime/accuracy tradeoff can have significant differences between training and testing phases, and these differences have large relevance for application settings of symbolic representations. We present SPARTAN with and without the speedup that can be achieved through a randomized SVD solver [10] for clarity.
 """
 references = f"""
 [1] Yanping Chen, Eamonn Keogh, Bing Hu, Nurjahan Begum, Anthony Bagnall, Abdullah
